@@ -1,0 +1,14 @@
+@use './settings';
+
+
+//PUBLIC
+@use './header';
+@use './home';
+@use './footer';
+
+//ADMIN
+@use './login';
+@use './adminNav';
+@use './listas';
+
+@use './especificos2';

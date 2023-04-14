@@ -1,0 +1,291 @@
+.modal-dialog{
+    max-width: 800px !important;
+}
+.modal-body {
+    padding: 0 !important;
+}
+
+.dot-spinner3{
+    position: absolute !important;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.content_img img{
+    width: 60%;
+    display: block;
+    margin: 0 auto ;
+}
+
+.agregarcliente2{
+    padding: 0 !important;
+}
+.container{
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+.modal-header img{
+    width: 50%;
+    margin: 0 auto;
+}
+
+
+.card-header{
+    text-align: center;
+}
+
+.paddrig{
+    padding-right: 20px;
+}
+
+.btn-close{
+    position: absolute;
+    right: 0;
+    padding: 40px !important;
+}
+
+.titulos_labels{
+    background-color: #906B9F;
+    color: white;
+    padding: 10px 20px;
+    font-weight: 600;
+    border-radius: 5px;
+    letter-spacing: 1px;
+}
+
+.div_conten{
+    display: flex;
+    align-items: center;
+    margin-bottom: 0 !important;
+}
+
+.div_conten2{
+    display: flex;
+    align-items: center;
+    padding-right: 20px;
+    margin-bottom: 0 !important;
+    justify-content: space-around;
+}
+
+.form-control3{
+    padding: 0 !important;
+    border: none !important;
+    border-bottom: 1px solid #906B9F !important;
+    margin-left: 10px !important;
+    outline: none !important;
+    box-shadow: none !important;
+    padding-left: 8px !important;
+    background-color: transparent !important;
+    color: rgb(95, 89, 89) !important;
+}
+
+.form-control2{
+    text-align: center;
+}
+
+.label_title{
+    color: #906B9F;
+    font-weight: bold;
+}
+
+.content_general{
+    padding: 10px 0;
+    display: flex;
+    background-color: #E1D0E2;
+    margin-bottom: 5px !important;
+    border-radius: 15px;
+    padding: 10px;
+}
+
+
+.div_box_generl_bot{
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.div_tercero{
+    margin-bottom: 0 !important;
+}
+
+.div_secundario{
+    display: flex;
+    flex-direction: column;
+    
+    textarea{
+        border: 1.5px solid #906B9F;
+        color: rgb(95, 89, 89) !important;
+    }
+}
+
+.div_busqueda{
+    display: flex;
+    justify-content: space-between;
+}
+
+.div_secundario label{
+    text-align: center;
+}
+
+.chsscjcon{
+    margin-top: 10px;
+}
+
+.div_bot_box2{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.div_bot_box2 .content_checkBox{
+    padding-top: 0px !important;
+    gap: 10px;
+}
+.label_title2{
+    color: #906B9F;
+}
+.content_span_2{
+    display: flex;
+    flex-direction: column;
+
+    &__edad_color{
+        font-weight: 100;
+    }
+}
+.color_Edad{
+    font-size: 15px;
+    font-weight: 100;
+}
+.content_checkBox{
+    gap: 20px;
+    display: flex;
+    padding-top: 10px;
+    margin-left: 10px;
+    align-items: center;
+}
+.checkbox_content_box{
+    display: flex;
+    flex-direction: column;
+    
+    &__2{
+        font-size: 14px;
+        font-weight: 100;
+    }
+}
+
+.checkbox_content_box4{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #906B9F;
+    border-radius: 8px;
+    width: 100%;
+}
+.div_general_box2{
+    justify-content: center;
+}
+.div_secundario2{
+    justify-content: right;
+}
+.content_checkBox span{
+    color: #9E83AF;
+}
+
+.on_active{
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid #906B9F;
+    display: flex;
+    align-items: center;
+}
+
+.div_general_box{
+    display: flex;
+    margin-bottom: 0 !important;
+}
+
+
+
+.on_active:checked{
+    background-color: #906B9F;
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+}
+
+.img_boxes{
+    display: block;
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.div_bot_box{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+}
+
+.div_tercero{
+    display: flex;
+    align-items: center;
+    gap: 0px;
+}
+
+.content_cuadrados{
+    width: 40px;
+    height: 40px;
+    position: relative;
+    border: 1px solid #906B9F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.content_cuadrados input{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    appearance: none;
+}
+.content_cuadrados input:checked{
+    background-color: #906B9F;
+}
+
+
+.div_tercero{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.on_active2{
+    width: 30px;
+    height: 30px;
+    border-radius: 10%;
+}
+
+.form-select2{
+    background: transparent;
+    box-shadow: none !important;
+    border: none;
+}
+
+.form-select2 option {
+    background: #D5BEDA !important; /* Cambia el color de fondo del botón desplegable */
+    border: none !important;
+}
+
+.button_estado{
+    border: none;
+    width: 100px;
+    font-size: 15px;
+    outline: none;
+    box-shadow: none;
+    color: white;
+    border-radius: 10px;
+    padding: 5px;
+    text-align: center;
+}
