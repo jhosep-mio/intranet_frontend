@@ -5,6 +5,7 @@ import {BsEnvelopeAt} from "react-icons/bs";
 import {BsTelephone} from 'react-icons/bs';
 import {BsFacebook} from 'react-icons/bs';
 import {BsInstagram} from 'react-icons/bs';
+import {Link} from 'react-router-dom';
 
 export const Header = () => {
   return (
@@ -27,12 +28,12 @@ export const Header = () => {
                 <div className="main-menu__menu">
                     <nav className='main-menu__menu__nav'>
                         <ul className="main-menu__menu__nav__list_nav">
-                            <li><a href="">Inicio</a></li>
-                            <li><a href="">Nosotros</a></li>
-                            <li><a href="">Servicios</a></li>
-                            <li><a href="">Contáctanos</a></li>
-                            <li><a href="">Resultados</a></li>
-                            <li><a href="">Intranet</a></li>
+                            <li><Link to="home">Inicio</Link></li>
+                            <li><Link to="nosotros">Nosotros</Link></li>
+                            <li><Link href="">Servicios</Link></li>
+                            <li><Link href="">Contáctanos</Link></li>
+                            <li><Link href="">Resultados</Link></li>
+                            <li><Link href="">Intranet</Link></li>
                         </ul>
                     </nav>
                 </div>
