@@ -7,6 +7,7 @@ import ListaClinica from '../components/private/tables/clinica/ListaClinica';
 import EditarClinica from '../components/private/tables/clinica/EditarClinica';
 import { PublicLayout } from '../components/public/PublicLayout';
 import { Home } from '../components/public/pages/Home';
+import { Nosotros } from '../components/public/pages/Nosotros';
 import ListaClientes from '../components/private/tables/clientes-odontologos/ListaClientes';
 import AgregarCliente from '../components/private/tables/clientes-odontologos/AgregarCliente';
 import EditarOdontologo from '../components/private/tables/clientes-odontologos/EditarOdontologo';
@@ -31,7 +32,10 @@ export const Routing = () => {
             <Route path='/' element={<PublicLayout/>}>
                 <Route index element={<Home/>}/>
                 <Route path='home' element={<Home/>}/>
+                <Route path='nosotros' element={<Nosotros/>}/>
             </Route>
+
+            
 
             {/* ADMINSITRADOR */}
 
