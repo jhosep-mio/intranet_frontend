@@ -16,6 +16,10 @@ import ListaOrdenVirtual from '../components/private/tables/orden_virtual/ListaO
 import ValidarOrdenVirtual from '../components/private/tables/orden_virtual/ValidarOrdenVirtual';
 import AgregarOrdenVirtual from '../components/private/tables/orden_virtual/AgregarOrdenVirtual';
 import AgregarClinica from '../components/private/tables/clinica/AgregarClinica';
+import ListaServicios from '../components/private/tables/servicios/ListaServicios';
+import AgregarServicio from '../components/private/tables/servicios/AgregarServicio';
+import EditarServicio from '../components/private/tables/servicios/EditarServicio';
+import AgregarItem from '../components/private/tables/servicios/AgregarItem';
 
 export const Routing = () => {
   return (
@@ -50,6 +54,12 @@ export const Routing = () => {
                 <Route path='clientes/agregar' element={<AgregarCliente/>}/>
                 <Route path='clientes/editar/paciente/:id' element={<EditarPaciente/>}/>
                 <Route path='clientes/editar/odontologos/:id' element={<EditarOdontologo/>}/>
+
+                {/* PACIENTES / ODONTOLOGOS */}
+                <Route path='servicios' element={<ListaServicios/>}/>
+                <Route path='servicios/agregar/servicio' element={<AgregarServicio/>}/>
+                <Route path='servicios/editar/:id' element={<EditarServicio/>}/>     
+                <Route path='servicios/agregar/item' element={<AgregarItem/>}/>
 
                 {/* ORDEN VIRTUAL */}
                 <Route path='ordenVirtual' element={<ListaOrdenVirtual/>}/>

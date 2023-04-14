@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faPencil, faTrash, faPlus} from '@fortawesome/free-solid-svg-icons';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Global } from '../../../../helper/Global';
 import axios from 'axios';
 import Table from 'react-bootstrap/Table';
@@ -9,9 +9,11 @@ import Pagination from 'react-bootstrap/Pagination';
 import Swal from 'sweetalert2';
 
 
-const ListaClientes = () => {
-    const [pacientes, setPacientes] = useState( [] );
-    const [odontologos, setOdontologos] = useState( [] );
+const ListaServicios = () => {
+    let token = localStorage.getItem("token");
+
+    const [itemServices, setitemServices] = useState( [] );
+    const [servicios, setservicios] = useState( [] );
 
     const [itemPagination, setItemPagination] = useState( [] );
     const [itemPaginationOdonto, setItemPaginationOdonto] = useState( [] );
@@ -28,38 +30,32 @@ const ListaClientes = () => {
     const [cargandoBusqueda2, setCargandoBusqueda2] = useState(0);
     const [activo, setActivo] = useState(0);
 
-    let token = localStorage.getItem("token");
 
     useEffect ( () =>{
-        const filter2 = pacientes.filter((cate) => {
+        const filter2 = itemServices.filter((cate) => {
             return (
                 quitarAcentos(cate.nombres.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
                 quitarAcentos(cate.apellido_m.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
                 quitarAcentos(cate.apellido_p.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
                 quitarAcentos(cate.correo.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
-                quitarAcentos(cate.numero_documento_paciente_odontologo.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
+                quitarAcentos(cate.numero_documento_item_servicio.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
                 cate.celular.toString().includes(search)
             );
         });
         setCargandoBusqueda(filter2.length);
 
 
-        const filter3 = odontologos.filter((cate) => {
+        const filter3 = servicios.filter((cate) => {
             return (
-                quitarAcentos(cate.nombres.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
-                quitarAcentos(cate.apellido_m.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
-                quitarAcentos(cate.apellido_p.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
-                quitarAcentos(cate.correo.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
-                quitarAcentos(cate.numero_documento_paciente_odontologo.toLowerCase()).includes(quitarAcentos(search.toLowerCase()))||
-                cate.cop.toString().includes(search)
+                quitarAcentos(cate.nombres.toLowerCase()).includes(quitarAcentos(search.toLowerCase()))
             );
         });
         setCargandoBusqueda2(filter3.length);
     }, [search]);
 
     useEffect ( () =>{
-        getAllPacientes();
-        getAllOdontologos();
+        getAllitemServices();
+        getAllservicios();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -88,7 +84,7 @@ const ListaClientes = () => {
                         </li>);
         }
         setItemPagination(items);
-    },[pacientes,paginaActual,search]);
+    },[itemServices,paginaActual,search]);
 
 
     useEffect(() =>{
@@ -116,47 +112,47 @@ const ListaClientes = () => {
                         </li>);
         }
         setItemPaginationOdonto(items);
-    },[odontologos,paginaActualOdonto,search]);
+    },[servicios,paginaActualOdonto,search]);
 
     const cambiarActivo = (id) =>{
         setActivo(id);
     }
 
-    const getAllPacientes= async () =>{
+    const getAllitemServices= async () =>{
         setLoading(true);
 
-        const request = await axios.get(`${Global.url}/allPacientes`,{
+        const request = await axios.get(`${Global.url}/allItemServices`,{
             headers:{
                 'Authorization': `Bearer ${token}`
             }
-        });
+        }); 
 
-        setPacientes(request.data);
+        setitemServices(request.data);
         setCargandoBusqueda(request.data.length);
         setLoading(false);
     };
 
-    const getAllOdontologos= async () =>{
+    const getAllservicios= async () =>{
         setLoading(true);
 
-        const request = await axios.get(`${Global.url}/allOdontologos`,{
+        const request = await axios.get(`${Global.url}/allServicios`,{
             headers:{
                 'Authorization': `Bearer ${token}`
             }
         });
 
-        setOdontologos(request.data);
+        setservicios(request.data);
         setCargandoBusqueda2(request.data.length);
         setLoading(false);
     };
 
     const indexOfLastPost = paginaActual * cantidadRegistros;
     const indexOfFirstPost= indexOfLastPost - cantidadRegistros;
-    let totalPosts = pacientes.length;
+    let totalPosts = itemServices.length;
 
     const indexOfLastPostOdonto = paginaActualOdonto * cantidadRegistros;
     const indexOfFirstPostOdonto= indexOfLastPostOdonto - cantidadRegistros;
-    let totalPostsOdonto = odontologos.length;
+    let totalPostsOdonto = servicios.length;
 
     function quitarAcentos(cadena){
         const acentos = {'á':'a','é':'e','í':'i','ó':'o','ú':'u','Á':'A','É':'E','Í':'I','Ó':'O','Ú':'U'};
@@ -165,18 +161,13 @@ const ListaClientes = () => {
 
     const filterDate = () =>{
         if(search.length === 0){
-            let paciente = pacientes.slice(indexOfFirstPost, indexOfLastPost);
-            return paciente;
+            let item = itemServices.slice(indexOfFirstPost, indexOfLastPost);
+            return item;
         }
 
-        const filter = pacientes.filter((cate) => {
+        const filter = itemServices.filter((item) => {
             return (
-                quitarAcentos(cate.nombres.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
-                quitarAcentos(cate.apellido_m.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
-                quitarAcentos(cate.apellido_p.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
-                quitarAcentos(cate.correo.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
-                quitarAcentos(cate.numero_documento_paciente_odontologo.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
-                cate.celular.toString().includes(search)
+                quitarAcentos(item.nombre.toLowerCase()).includes(quitarAcentos(search.toLowerCase()))
             );
         });
 
@@ -184,20 +175,15 @@ const ListaClientes = () => {
         return filter.slice(indexOfFirstPost, indexOfLastPost);
     }
 
-    const filterDateOdontologos = () =>{
+    const filterDateservicios = () =>{
         if(search.length === 0){
-            let odontologo = odontologos.slice(indexOfFirstPostOdonto, indexOfLastPostOdonto);
-            return odontologo;
+            let servicio = servicios.slice(indexOfFirstPostOdonto, indexOfLastPostOdonto);
+            return servicio;
         }
 
-        const filter = odontologos.filter((cate) => {
+        const filter = servicios.filter((serv) => {
             return (
-                quitarAcentos(cate.nombres.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
-                quitarAcentos(cate.apellido_m.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
-                quitarAcentos(cate.apellido_p.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
-                quitarAcentos(cate.correo.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
-                quitarAcentos(cate.numero_documento_paciente_odontologo.toLowerCase()).includes(quitarAcentos(search.toLowerCase()))||
-                cate.cop.toString().includes(search)
+                quitarAcentos(serv.nombre.toLowerCase()).includes(quitarAcentos(search.toLowerCase()))
             );
         });
 
@@ -213,33 +199,33 @@ const ListaClientes = () => {
 
     const preguntar = (id) =>{
         Swal.fire({
-            title: `¿Estas seguro de eliminar al paciente N° ${id}?`,
+            title: `¿Estas seguro de eliminar al item N° ${id}?`,
             showDenyButton: true,
             confirmButtonText: 'Eliminar',
             denyButtonText: `Cancelar`,
           }).then((result) => {
             if (result.isConfirmed) {
-                deletePaciente(id);
+                deleteitem(id);
             }
           })
     }
 
     const preguntar2 = (id) =>{
         Swal.fire({
-            title: `¿Estas seguro de eliminar al odontologo N° ${id}?`,
+            title: `¿Estas seguro de eliminar al servicio N° ${id}?`,
             showDenyButton: true,
             confirmButtonText: 'Eliminar',
             denyButtonText: `Cancelar`,
           }).then((result) => {
             if (result.isConfirmed) {
-                deleteOdontologo(id);
+                deleteServicio(id);
             }
           })
     }
 
-    const deletePaciente = async (id) =>{
+    const deleteitem = async (id) =>{
         try {
-            const resultado= await axios.delete(`${Global.url}/deletePaciente/${id}`,{
+            const resultado= await axios.delete(`${Global.url}/deleteitem/${id}`,{
                 headers:{
                     'Authorization': `Bearer ${token}`
                 }
@@ -249,7 +235,7 @@ const ListaClientes = () => {
             
             if(resultado.data.status === "success"){
                 Swal.fire('Registro eliminado correctamente', '', 'success');
-                getAllPacientes();
+                getAllitemServices();
                 setTimeout(()=>{
                     if(Math.round(totalPosts / cantidadRegistros) === paginaActual){
 
@@ -265,9 +251,9 @@ const ListaClientes = () => {
         }
     }
 
-    const deleteOdontologo = async (id) =>{
+    const deleteServicio = async (id) =>{
         try {
-            const resultado= await axios.delete(`${Global.url}/deletePaciente/${id}`,{
+            const resultado= await axios.delete(`${Global.url}/deleteServicio/${id}`,{
                 headers:{
                     'Authorization': `Bearer ${token}`
                 }
@@ -277,7 +263,7 @@ const ListaClientes = () => {
             
             if(resultado.data.status === "success"){
                 Swal.fire('Registro eliminado correctamente', '', 'success');
-                getAllPacientes();
+                getAllitemServices();
                 setTimeout(()=>{
                     if(Math.round(totalPostsOdonto / cantidadRegistros) === paginaActualOdonto){
 
@@ -299,25 +285,32 @@ const ListaClientes = () => {
                 {/* TAMAÑO DE LA TABLA WIDTH  */}
                 <div className="col-md-11">
 
+                    {activo === 0 ?
                     <div className="d-grid">
                         <input type="hidden" name="oculto" value="1" />
-                        <Link type="submit" className="btn btn-primary mb-3" to="agregar"> <FontAwesomeIcon icon={faPlus}/> Registrar</Link>
+                        <Link type="submit" className="btn btn-primary mb-3" to="agregar/item" style={{width: '200px'}}> <FontAwesomeIcon icon={faPlus}/> Registrar Item</Link>
                     </div>
+                    :
+                    <div className="d-grid">
+                        <input type="hidden" name="oculto" value="1" />
+                        <Link type="submit" className="btn btn-primary mb-3" to="agregar/servicio" style={{width: '250px'}}> <FontAwesomeIcon icon={faPlus}/> Registrar Categoria</Link>
+                    </div>
+                    }
                     {/* <!--==== TABLA PRODUCTOS ====--> */}
                     <div className="card">
                         <div className="card-header text-center fs-5 fw-bolder" style={{transition: 'all 500ms'}}>
-                            Lista de {activo === 0 ? "Pacientes" : "Odontologos" } 
+                            Lista de {activo === 0 ? "Items-Servicios" : "Servicos" } 
                         </div>
                         <div className='content_top_filters'>
                                 <div className='content_top_filters__buttons'>
                                     <button onClick={() => cambiarActivo(0)} style={{
                                                 backgroundColor: 0 === activo ? '#41326D' : 'transparent',
                                                 color: 0 === activo ? 'white' : '#41326D'
-                                    }}>Pacientes</button>
+                                    }}>Items</button>
                                     <button onClick={() => cambiarActivo(1)} style={{
                                                 backgroundColor: 1 === activo ? '#41326D' : 'transparent',
                                                 color: 1 === activo ? 'white' : '#41326D'
-                                    }}>Odontologos</button>
+                                    }}>servicios</button>
                                 </div>
                                 <div id="productos_filter" className="dataTables_filter">
                                     <label>Buscar:<input 
@@ -329,7 +322,7 @@ const ListaClientes = () => {
                         </div>
                         
                         {activo === 0 ?
-                        <div className="p-4 table-responsive odon_pacientes">
+                        <div className="p-4 table-responsive odon_itemServices">
                             <Table id="productos" className="table align-middle table-hover display">
                                 <thead className="table-light">
                                     <tr>
@@ -338,52 +331,36 @@ const ListaClientes = () => {
                                         {/* <!-- 2 --> */}
                                         <th scope="col" className="text-center">Nombre</th>
 
-                                        <th scope="col" className="text-center">Apellidos</th>
+                                        <th scope="col" className="text-center">Servicio</th>
 
-                                        <th scope="col" className="text-center">N°Documento</th>
-
-                                        <th scope="col" className="text-center">Correo</th>
-
-                                        <th scope="col" className="text-center">Numero</th>
+                                        <th scope="col" className="text-center">Precio</th>
 
                                         {/* <!-- 3 --> */}
                                         <th scope="col" className="text-center">Opciones</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tableBody">
-                                    { loading === false ? filterDate().map( (paciente)=>(
-                                        <tr key={paciente.id}>
+                                    { loading === false ? filterDate().map( (item)=>(
+                                        <tr key={item.id}>
                                             
                                             <td  className="text-center">
-                                                {paciente.id}
+                                                {item.id}
                                             </td>
 
                                             <td  className="text-center">
-                                                {paciente.nombres}
+                                                {item.nombres}
                                             </td>
 
                                             <td  className="text-center">
-                                                {paciente.apellido_p} {paciente.apellido_m}
-                                            </td>
-
-                                            <td  className="text-center">
-                                                {paciente.numero_documento_paciente_odontologo}
-                                            </td>
-
-                                            <td  className="text-center">
-                                                {paciente.correo}
-                                            </td>
-
-                                            <td  className="text-center">
-                                                {paciente.celular}
+                                                {item.precio_venta}
                                             </td>
 
                                             {/* <!-- 9. Opciones --> */}
                                             <td className="text-center">
-                                                <Link className="text-success" to={`/admin/clientes/editar/paciente/${paciente.id}`}>
+                                                <Link className="text-success" to={`/admin/clientes/editar/item/${item.id}`}>
                                                 <FontAwesomeIcon icon={faPencil}/>
                                                 </Link>
-                                                <button className="text-danger btnEliminar" onClick={()=>{preguntar(paciente.id)}}>
+                                                <button className="text-danger btnEliminar" onClick={()=>{preguntar(item.id)}}>
                                                     <FontAwesomeIcon icon={faTrash}/>
                                                 </button>
                                             </td>
@@ -422,61 +399,36 @@ const ListaClientes = () => {
                             </div> 
                         </div>
                         : 
-                        
-                        <div className="p-4 table-responsive odon_pacientes">
+                        <div className="p-4 table-responsive odon_itemServices">
                             <Table id="productos" className="table align-middle table-hover display">
                                 <thead className="table-light">
                                     <tr>
                                         <th scope="col" className="text-center">ID</th>
 
-                                        <th scope="col" className="text-center">COD</th>
-
                                         <th scope="col" className="text-center">Nombre</th>
-
-                                        <th scope="col" className="text-center">Apellidos</th>
-
-                                        <th scope="col" className="text-center">N°Documento</th>
-
-                                        <th scope="col" className="text-center">Correo</th>
 
                                         {/* <!-- 3 --> */}
                                         <th scope="col" className="text-center">Opciones</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tableBody">
-                                    { loading === false ? filterDateOdontologos().map( (odontolo)=>(
-                                        <tr key={odontolo.id}>
+                                    { loading === false ? filterDateservicios().map( (servicio)=>(
+                                        <tr key={servicio.id}>
                                             
                                             <td  className="text-center">
-                                                {odontolo.id}
+                                                {servicio.id}
                                             </td>
 
                                             <td  className="text-center">
-                                                {odontolo.cop}
-                                            </td>
-
-                                            <td  className="text-center">
-                                                {odontolo.nombres}
-                                            </td>
-
-                                            <td  className="text-center">
-                                                {odontolo.apellido_p} {odontolo.apellido_m}
-                                            </td>
-
-                                            <td  className="text-center">
-                                                {odontolo.numero_documento_paciente_odontologo}
-                                            </td>
-
-                                            <td  className="text-center">
-                                                {odontolo.correo}
+                                                {servicio.nombre}
                                             </td>
 
                                             {/* <!-- 9. Opciones --> */}
                                             <td className="text-center">
-                                                <Link className="text-success" to={`/admin/clientes/editar/odontologos/${odontolo.id}`}>
+                                                <Link className="text-success" to={`/admin/servicios/editar/${servicio.id}`}>
                                                 <FontAwesomeIcon icon={faPencil}/>
                                                 </Link>
-                                                <button className="text-danger btnEliminar" onClick={()=>{preguntar2(odontolo.id)}}>
+                                                <button className="text-danger btnEliminar" onClick={()=>{preguntar2(servicio.id)}}>
                                                     <FontAwesomeIcon icon={faTrash}/>
                                                 </button>
                                             </td>
@@ -522,4 +474,4 @@ const ListaClientes = () => {
     )
 }
 
-export default ListaClientes
+export default ListaServicios

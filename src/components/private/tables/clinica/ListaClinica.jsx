@@ -7,7 +7,7 @@ import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import Pagination from 'react-bootstrap/Pagination';
 import Swal from 'sweetalert2';
-
+import { BsXCircle } from "react-icons/bs";
 
 const ListaClinica = () => {
 
@@ -171,9 +171,9 @@ const ListaClinica = () => {
                                         {/* <!-- 1 --> */}
                                         <th scope="col" className="text-center">ID</th>
                                         {/* <!-- 2 --> */}
-                                        <th scope="col" className="text-center">Nombre</th>
+                                        <th scope="col" className="text-left">Nombre</th>
 
-                                        <th scope="col" className="text-center">Dirección</th>
+                                        <th scope="col" className="text-left" >Dirección</th>
 
                                         <th scope="col" className="text-center">Telefono</th>
 
@@ -190,16 +190,18 @@ const ListaClinica = () => {
                                                 {clinica.id}
                                             </td>
 
-                                            <td  className="text-center">
+                                            <td  className="text-truncate trucate_text">
                                                 {clinica.nombre}
                                             </td>
 
-                                            <td  className="text-center">
+                                            <td  className="text-truncate trucate_text">
                                                 {clinica.direccion}
                                             </td>
 
                                             <td  className="text-center">
-                                                {clinica.telefono}
+                                                {clinica.telefono === null ?
+                                                <BsXCircle/>
+                                                : clinica.telefono}
                                             </td>
 
                                             <td  className="text-center">

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Global } from '../../../../helper/Global';
 import Swal from 'sweetalert2';
-
+import logo from "./../../../../assets/logos/logo.png";
 
 const AgregarClinica = () => {
 
@@ -12,6 +12,7 @@ const AgregarClinica = () => {
     const [referencia, setReferencia] = useState("");
     const [telefono, setTelefono] = useState("");
     const [celular, setCelular] = useState("");
+    
     const navigate = useNavigate();
 
     const saveClinica = async (e) => {
@@ -52,57 +53,72 @@ const AgregarClinica = () => {
     }
 
     return (
-        <div className="container col-md-10 mt-6">
+        <div className="container col-md-8 mt-6">
             <div className="card">
                 <div className="card-header fw-bold">
                     Agregar Clinica:
                 </div>
                 <form className="p-4 needs-validation" onSubmit={saveClinica}>
                     <div className="d-flex justify-content-between">
-                        <div className="mb-3 col-md-5">
-                            <label className="form-label">Nombre: </label>
-                            <input className="form-control" autoFocus required
-                                value={nombre}
-                                onChange={(e) => { setNombre(e.target.value) }}
-                                type="text"
-                            />
-                        </div>
-
-                        <div className="mb-3 col-md-6">
-                            <label className="form-label">Dirección: </label>
-                            <input className="form-control" autoFocus required
-                                value={direccion}
-                                onChange={(e) => { setDireccion(e.target.value) }}
-                                type="text"
-                            />
+                        <div className="mb-3 col-md-12 content_img">
+                           <img src={logo} alt=""/>
                         </div>
                     </div>
+                    <div className="d-flex justify-content-center">
+                        <div className="mb-3 col-md-11">
+                            <div className='content_general mb-3 col-md-12'>
+                                <div className="mb-3 col-md-12 div_conten">
+                                    <label className="label_title">Nombres: </label>
+                                    <input className="form-control form-control3" autoFocus required
+                                        value={nombre}
+                                        type="text"
+                                        onChange={(e) => setNombre(e.target.value)}
+                                    />
+                                </div>
+                            </div>
 
-                    <div className="d-flex  justify-content-between">
-                        <div className="mb-3 col-md-4">
-                            <label className="form-label">Referencia: </label>
-                            <input className="form-control" autoFocus
-                                value={referencia}
-                                onChange={(e) => { setReferencia(e.target.value) }}
-                                type="text"/>
-                        </div> 
+                            <div className='content_general mb-3 col-md-12'>
+                                <div className="mb-3 col-md-12 div_conten">
+                                    <label className="label_title">Dirección: </label>
+                                    <input className="form-control form-control3" autoFocus required
+                                        value={direccion}
+                                        type="text"
+                                        onChange={(e) => setDireccion(e.target.value)}
+                                    />
+                                </div>
+                            </div>
 
-                        <div className="mb-3 col-md-3">
-                            <label className="form-label">Telefono: </label>
-                            <input className="form-control" autoFocus 
-                                value={telefono}
-                                onChange={(e) => { setTelefono(e.target.value) }}
-                                type="text"/>
-                        </div> 
-                        <div className="mb-3 col-md-4">
-                            <label className="form-label">Celular: </label>
-                            <input className="form-control" autoFocus required
-                                value={celular}
-                                onChange={(e) => { setCelular(e.target.value) }}
-                                type="text"/>
-                        </div> 
-                    </div>
+                            <div className='content_general mb-3 col-md-12'>
+                                <div className="mb-3 col-md-12 div_conten">
+                                    <label className="label_title">Referencia: </label>
+                                    <input className="form-control form-control3" autoFocus
+                                        value={referencia}
+                                        type="text"
+                                        onChange={(e) => setReferencia(e.target.value)}
+                                    />
+                                </div>
+                            </div>
 
+                            <div className='content_general mb-3 col-md-12'>
+                                <div className="mb-3 col-md-6 div_conten2">
+                                    <label className="label_title">Telefono: </label>
+                                    <input className="form-control form-control3" autoFocus 
+                                    value={telefono}
+                                    onChange={(e) => { setTelefono(e.target.value) }}
+                                    type="text"
+                                    />
+                                </div>
+                                <div className="mb-3 col-md-6 div_conten">
+                                    <label className="label_title">Celular: </label>
+                                    <input className="form-control form-control3" autoFocus required
+                                        value={celular}
+                                        onChange={(e) => { setCelular(e.target.value) }}
+                                        type="text"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
                     <div className="d-flex gap-2 contentBtnRegistrar">
                         <input type="hidden" name="oculto" value="1" />
                         <Link to="/admin/clinicas" className="btn btn-danger btnCancelar">Cancelar</Link>

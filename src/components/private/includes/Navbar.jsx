@@ -1,14 +1,15 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import logo from './../../../assets/logo/logazo.png';
-import logowhite from './../../../assets/logo/logo_white.png';
+import logo from './../../../assets/logos/logo.png';
+import logowhite from './../../../assets/logos/logo_white.png';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCircleChevronRight, faMoon, faArrowRightFromBracket, faSun} from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { Global } from '../../../helper/Global';
 import useAuth from '../../../hooks/useAuth';
-import { FaJediOrder,FaUsers, FaHospitalAlt} from "react-icons/fa";
+import { FaJediOrder,FaUsers, FaHospitalAlt, } from "react-icons/fa";
+import { BsStack } from "react-icons/bs";
 
 export const Navbar = () => {
     const {setAuth} = useAuth();
@@ -83,6 +84,13 @@ export const Navbar = () => {
                                     <Link className="" to="clientes">
                                         <FaUsers  className="icon"/>
                                         <span className="text nav-text">Clientes</span>
+                                    </Link>
+                                </li>
+
+                                <li className="nav-links li">
+                                    <Link className="" to="servicios">
+                                        <BsStack  className="icon"/>
+                                        <span className="text nav-text">Servicios</span>
                                     </Link>
                                 </li>
 
