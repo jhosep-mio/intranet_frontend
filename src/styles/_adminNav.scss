@@ -35,16 +35,16 @@
         height: 100%;
 
         button{
-            border: 1px solid #11284A;
+            border: 1px solid #41326D;
             background-color: transparent;
             transition: all 500ms;
-            color: #11284A;
+            color: #41326D;
             padding: 10px 15px;
         }
 
         button:hover{
             border: 1px solid transparent;
-            background-color: #11284A;
+            background-color: #41326D;
             color: white;
             padding: 10px 15px;
             transition: all 500ms;
@@ -73,16 +73,18 @@
 }
 
 .contenedor_apoderado_{
-    border: 1px solid rgb(129, 125, 125);
-    padding: 20px;
+    border: 1px solid #41326D;
+    padding: 10px;
+    margin-top: 20px;
     margin-bottom: 20px;
+    border-radius: 10px;
 }
 
 
 :root {
     /* ===== Colors ===== */
     --sidebar-color: #FFF;
-    --primary-color: #11284A;
+    --primary-color: #41326D;
     --primary-color-light: #F6F5FF;
     --toggle-color: #DDD;
     --text-color: #707070;
@@ -255,7 +257,7 @@ header .image-text .profession {
 }
 
 .sidebar header .image img {
-    width: 38%;
+    width: 100%;
     border-radius: 6px;
     margin-top: 5px;
     margin-right: 10px;

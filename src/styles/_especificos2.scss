@@ -12,6 +12,10 @@
     transform: translate(-50%, -50%);
 }
 
+.dot-spinner4{
+    margin: 0 auto;
+}
+
 .content_img img{
     width: 60%;
     display: block;
@@ -56,20 +60,24 @@
 }
 
 .div_conten{
+    gap: 10px;
     display: flex;
     align-items: center;
     margin-bottom: 0 !important;
+    justify-content: left;
 }
 
 .div_conten2{
+    gap: 10px;
     display: flex;
     align-items: center;
-    padding-right: 20px;
+    padding-right: 30px;
     margin-bottom: 0 !important;
-    justify-content: space-around;
+    justify-content: left;
 }
 
 .form-control3{
+    // width: fit-content !important;
     padding: 0 !important;
     border: none !important;
     border-bottom: 1px solid #906B9F !important;
@@ -86,6 +94,7 @@
 }
 
 .label_title{
+    width: fit-content !important;
     color: #906B9F;
     font-weight: bold;
 }
@@ -268,14 +277,19 @@
 }
 
 .form-select2{
+    color: rgb(95, 89, 89) !important;
+    width: 100%;
     background: transparent;
     box-shadow: none !important;
     border: none;
+    outline: none;
 }
 
 .form-select2 option {
     background: #D5BEDA !important; /* Cambia el color de fondo del botón desplegable */
     border: none !important;
+    font-size: 15px;
+    color: rgb(95, 89, 89) !important;
 }
 
 .button_estado{
@@ -288,4 +302,39 @@
     border-radius: 10px;
     padding: 5px;
     text-align: center;
+}
+
+.trucate_text{
+    max-width: 150px !important;
+}
+
+.div_conten3{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+
+    textarea{
+        background: transparent !important;
+        border: 1px solid #906B9F !important;
+        outline: none !important;
+        box-shadow: none !important;
+        resize: none;
+        color: rgb(95, 89, 89) !important;
+    }
+}
+
+.div_busqueda2{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px 0 10px 0;
+}
+
+.boton_agregar_clinica{
+    padding: 0;
+    margin: 0;
+    input{
+        width: 100% !important;
+        margin-top: 0;
+    }
 }
