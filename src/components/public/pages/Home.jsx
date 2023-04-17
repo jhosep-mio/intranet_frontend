@@ -244,7 +244,7 @@ export const Home = () => {
                 <input type="text" placeholder="Celular" id="celular" name="celular" className="inputs"/>
               </label>
               <label htmlFor="mensaje">
-                <textarea name="mensaje" id="mensaje" cols="30" rows="10" placeholder="Mensaje" className="inputs"></textarea>
+                <textarea name="mensaje" id="mensaje" cols="30" rows="10" placeholder="Mensaje" className="inputs area"></textarea>
               </label>
               <input type="submit" value="Enviar" className="enviar"/>
             </form>

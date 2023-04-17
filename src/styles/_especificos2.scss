@@ -16,6 +16,12 @@
     margin: 0 auto;
 }
 
+.icon_titles{
+    font-size: 25px;
+    color: #906B9F;
+    margin-left: 20px;
+}
+
 .content_img img{
     width: 60%;
     display: block;
@@ -119,12 +125,26 @@
 }
 
 .div_secundario{
-    display: flex;
-    flex-direction: column;
-    
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 0;
     textarea{
         border: 1.5px solid #906B9F;
         color: rgb(95, 89, 89) !important;
+    }
+}
+.accordion-button{
+    box-shadow: none !important;
+    
+}
+.accordion-button:not(.collapsed) {
+    background: #E1D0E2 !important;
+    padding: 0 10px;
+}
+.content_checkBox{
+    padding: 10px;
+    span{
+        font-size: 14px;
     }
 }
 
@@ -173,6 +193,14 @@
     margin-left: 10px;
     align-items: center;
 }
+
+.content_checkBox2{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 20px;
+}
+
 .checkbox_content_box{
     display: flex;
     flex-direction: column;
@@ -203,12 +231,11 @@
 
 .on_active{
     appearance: none;
-    width: 16px;
-    height: 16px;
     border-radius: 50%;
     border: 2px solid #906B9F;
     display: flex;
     align-items: center;
+    padding: 8px;
 }
 
 .div_general_box{
@@ -337,4 +364,13 @@
         width: 100% !important;
         margin-top: 0;
     }
+}
+
+.accordion-button{
+    padding: 0;
+}
+
+.accordion-item{
+    border: none;
+    margin-bottom: 10px;
 }

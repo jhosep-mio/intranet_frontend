@@ -3,6 +3,23 @@
 .footer{
     padding: 50px 60px 20px 60px;
     background: C.$main-color;
+    position: relative;
+    margin-top: 160px;
+
+    &::before{
+        content: '';
+        height: 250px;
+        display: block;
+        width: 100%;
+        z-index: 3;
+        bottom: 80%;
+        left: 0;
+        position: absolute;
+        background-image: url(../assets/home/footer.png);
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
 
     &__main{
         display: flex;
@@ -11,7 +28,7 @@
             width: 16%;
     
             img{
-                width: 70%;
+                width: 40%;
                 display: block;
                 margin: 0 auto;
             }

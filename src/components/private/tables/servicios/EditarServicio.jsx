@@ -46,7 +46,7 @@ const EditarServicio = () => {
                 Swal.fire('Actualizacion Correcta', '', 'success');
                 navigate(`/admin/servicios`);
             }else{
-                Swal.fire('Error al editar la clinica', '', 'error');
+                Swal.fire('Error al realizar la edicion', '', 'error');
             }
         } catch (error) {
             console.log(error.request.response)
