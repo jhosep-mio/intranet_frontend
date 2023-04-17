@@ -132,7 +132,7 @@ const ValidarOrdenVirtual = () => {
 
                     <div className="d-flex gap-2 contentBtnRegistrar">
                         <input type="hidden" name="oculto" value="1" />
-                        <Link to="/admin/clinicas" className="btn btn-danger btnCancelar">Cancelar</Link>
+                        <Link to="/admin/ordenVirtual" className="btn btn-danger btnCancelar">Cancelar</Link>
                         <input type="submit" className="btn btn-primary btnRegistrar" value="Continuar" />
                     </div>
                 </form>

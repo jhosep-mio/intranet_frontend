@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Global } from '../../../../helper/Global';
 import Swal from 'sweetalert2';
 import logo from "./../../../../assets/logos/logo.png";
 
-const AgregarItem = () => {
+const EditarItem = () => {
+
     let token = localStorage.getItem("token");
 
     const[servicios, setServicios] = useState([]);
@@ -20,41 +21,54 @@ const AgregarItem = () => {
     const [insumos3, setInsumos3] = useState("");
     const [insumos4, setInsumos4] = useState("");
 
-    useEffect ( () =>{
-        getServicios();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
-    const saveItem = async (e) => {
-        e.preventDefault();
-        let token = localStorage.getItem("token");
+    const {id} = useParams();
 
+    const preguntar = (e) =>{
+        e.preventDefault();
+        Swal.fire({
+            title: '¿Seguro que deseas editar el registro?',
+            showDenyButton: true,
+            confirmButtonText: 'Editar',
+            denyButtonText: `Cancelar`,
+          }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                updateItem();
+            }
+          })
+    }
+
+    const updateItem = async () => {
         const data = new FormData();
+        
         data.append('id_servicio', id_servicio);
         data.append('nombre', nombre);
         data.append('precio_venta', precio_venta);
-        data.append('comision_impreso', comision_impreso);
-        data.append('comision_digital', comision_digital);
-        data.append('insumos1', insumos1);
-        data.append('insumos2', insumos2);
-        data.append('insumos3', insumos3);
-        data.append('insumos4', insumos4);
+        data.append('comision_impreso', comision_impreso === null ? "" : comision_impreso);
+        data.append('comision_digital', comision_digital === null ? "" : comision_digital);
+        data.append('insumos1', insumos1 === null ? "" : insumos1);
+        data.append('insumos2', insumos2 === null ? "" : insumos2);
+        data.append('insumos3', insumos3 === null ? "" : insumos3);
+        data.append('insumos4', insumos4 === null ? "" : insumos4);
 
+        data.append('_method', 'PUT');
 
         try {
-            let respuesta = await axios.post(`${Global.url}/saveItem`, data,{
+            let respuesta= await axios.post(`${Global.url}/updateItem/${id}`, data,{
                 headers:{
                     'Authorization': `Bearer ${token}`
                 }
             });
-            
+
             if(respuesta.data.status === "success"){
-                Swal.fire('Agreado correctamente', '', 'success');
+                Swal.fire('Actualizacion Correcta', '', 'success');
                 navigate(`/admin/servicios`);
             }else{
-                Swal.fire('Error al agregar el registro', '', 'error');
+                Swal.fire('Error al realizar la edicion', '', 'error');
             }
         } catch (error) {
             console.log(error.request.response)
@@ -62,8 +76,36 @@ const AgregarItem = () => {
                 Swal.fire('Nombre invalido', '', 'error');
             }
         }
+     
+    }
+    useEffect(()=>{
+        getItemOne();
+        getServicios();
+        //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const getItemOne = async() =>{
+        setLoading(true);
+        const oneItem = await axios.get(`${Global.url}/oneItem/${id}`,{
+            headers:{
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        setId_servicio(oneItem.data.id_servicio);
+        setNombre(oneItem.data.nombre);
+        setPrecio_venta(oneItem.data.precio_venta);
+        setComision_impreso(oneItem.data.comision_impreso);
+        setComision_digital(oneItem.data.comision_digital);
+        setInsumos1(oneItem.data.insumos1);
+        setInsumos2(oneItem.data.insumos2);
+        setInsumos3(oneItem.data.insumos3);
+        setInsumos4(oneItem.data.insumos4);
+
+        setLoading(false);
     }
 
+    
     const getServicios= async () =>{
         const request = await axios.get(`${Global.url}/allServicios`,{
             headers:{
@@ -72,19 +114,20 @@ const AgregarItem = () => {
         });
         setServicios(request.data);
     };
-
+       
     return (
-        <div className="container col-md-8 mt-6">
+        <div className="container col-md-10 mt-6">
             <div className="card">
                 <div className="card-header fw-bold">
-                    Agregar Item:
+                    Editar Servicio:
                 </div>
-                <form className="p-4 needs-validation" onSubmit={saveItem}>
-                    <div className="d-flex justify-content-between">
-                        <div className="mb-3 col-md-12 content_img">
-                           <img src={logo} alt=""/>
-                        </div>
+                <div className="d-flex justify-content-between">
+                    <div className="mb-3 col-md-12 content_img">
+                    <img src={logo} alt="" />
                     </div>
+                </div>
+                {loading === false ?
+                <form className="p-4 needs-validation" onSubmit={preguntar}>
                     <div className="d-flex justify-content-center">
                         <div className="mb-3 col-md-11">
                             <div className='content_general mb-3 col-md-12'>
@@ -181,14 +224,25 @@ const AgregarItem = () => {
                         </div>
                     </div>    
                     <div className="d-flex gap-2 contentBtnRegistrar">
-                        <input type="hidden" name="oculto" value="1" />
-                        <Link to="/admin/servicios" className="btn btn-danger btnCancelar">Cancelar</Link>
-                        <input type="submit" className="btn btn-primary btnRegistrar" value="Registrar" />
-                    </div>
+                            <input type="hidden" name="oculto" value="1" />
+                            <Link to="/admin/clinicas" className="btn btn-danger btnCancelar">Cancelar</Link>
+                            <input type="submit" className="btn btn-primary btnRegistrar" value="Editar" />
+                        </div>
                 </form>
+                : <div className="dot-spinner dot-spinner4">
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                </div>}
             </div>
+             
         </div>
     )
 }
 
-export default AgregarItem
+export default EditarItem

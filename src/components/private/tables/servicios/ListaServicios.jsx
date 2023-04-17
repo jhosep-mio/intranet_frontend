@@ -348,7 +348,11 @@ const ListaServicios = () => {
                                             </td>
 
                                             <td  className="text-center">
-                                                {item.nombres}
+                                                {item.nombre}
+                                            </td>
+
+                                            <td  className="text-center">
+                                                {item.servicio}
                                             </td>
 
                                             <td  className="text-center">
@@ -357,7 +361,7 @@ const ListaServicios = () => {
 
                                             {/* <!-- 9. Opciones --> */}
                                             <td className="text-center">
-                                                <Link className="text-success" to={`/admin/clientes/editar/item/${item.id}`}>
+                                                <Link className="text-success" to={`/admin/servicios/editar/item/${item.id}`}>
                                                 <FontAwesomeIcon icon={faPencil}/>
                                                 </Link>
                                                 <button className="text-danger btnEliminar" onClick={()=>{preguntar(item.id)}}>

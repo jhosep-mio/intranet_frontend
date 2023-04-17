@@ -1,34 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate,useParams} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Global } from '../../../../helper/Global';
 import Swal from 'sweetalert2';
 import logo from "./../../../../assets/logos/logo.png";
-import { BsArrowUpCircle, BsArrowDownCircle } from "react-icons/bs";
-import Accordion from 'react-bootstrap/Accordion';
+import grande from './../../../../assets/admin/grande.jpg';
+import mediano from './../../../../assets/admin/mediano.jpg';
+import pequeno from './../../../../assets/admin/pequeno.jpg';
 
-const EditarOrdenVirtual = () => {
+const AgregarOrdenVirtual = () => {
 
     useEffect(() =>{
-        getOneOrden();
+        getCliente();
         getAllOdontologos();
         getAllServicios();
-        getAllItems();
     },[])
-
-    const {id} = useParams();
 
     let token = localStorage.getItem("token");
 
     const[varon, setVaron] = useState(false);
     const[mujer, setMujer] = useState(false);
-    const[idServicio, setIdServicio] = useState(0);
-
 
     const[odontologos, setOdontologos] = useState([]);
     const[servicios, setServicios] = useState([]);
-    const[items, setItems] = useState([]);
-    const [elementos, setElementos] = useState([]);
 
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
@@ -45,10 +39,21 @@ const EditarOrdenVirtual = () => {
 
     //ORDEN VIRTUAL
     const[idPaciente,setIdPaciente] = useState(0);
-    const[idOdontologo, setIdOdontologo] = useState(0);
     const[consulta, setConsulta] = useState("");
+    const[idOdontologo, setIdOdontologo] = useState(0);
 
-  
+    const[senosMaxilares, setSenosMaxilares] = useState(false);
+    const[atm, setAtm] = useState(false);
+    const[ortodoncia, setOrtodoncia] = useState(false);
+    const[areaPatologica, setAreaPatologica] = useState(false);
+    const[implantes, setImplantes] = useState(false);
+    const[localizacionDiente, setLocalizacionDiente] = useState(false);
+    const[fracturaRadiocular, setFracturaRadiocular] = useState(false);
+    const[endodoncia, setEndodoncia] = useState(false);
+    const[anatomia, setAnatomia] = useState(false);
+    const[sinAnalisis, setSinAnalisis] = useState(false);
+    const[conAnalisis, setConAnalisis] = useState(false);
+
     const[box18, setBox18] = useState(false);
     const[box17, setBox17] = useState(false);
     const[box16, setBox16] = useState(false);
@@ -88,12 +93,29 @@ const EditarOrdenVirtual = () => {
     const[siConGuias, setSiConGuias] = useState(false);
     const[noConGuias, setNoConGuias] = useState(false);
 
+    const[radiografiaPanoramica, setRadiografiaPanoramica] = useState(false);
+    const[radiografiaCefalometrica, setRadiografiaCefalometrica] = useState(false);
+    const[radiografiaCerpal, setRadiografiaCerpal] = useState(false);
+    const[fotosExtraorales, setFotosExtraorales] = useState(false); 
+    const[estudioAtm, setEstudioAtm] = useState(false);
+    const[radiografiaPosterior, setRadiografiaPosterior] = useState(false);
+        
+    const[otrosRadiografias, setOtrosRadiografias] = useState("");
 
+    const[paquetesOrtodoncicosA, setPaquetesOrtodoncicosA] = useState(false);
+    const[paquetesOrtodoncicosB, setPaquetesOrtodoncicosB] = useState(false);
+    const[paquetesPediatricos, setPaquetesPediatricos] = useState(false);
+
+    const[ricketts, setRicketts] = useState(false);
+    const[schwartz, setSchwartz] = useState(false);
+    const[steiner, setSteiner] = useState(false);
+    const[mcNamara, setMcNamara] = useState(false);
+    const[tweed, setTweed] = useState(false);
+    const[downs, setDowns] = useState(false);
+    const[bjork, setBjork] = useState(false);
+    const[usp, setUsp] = useState(false);
+    const[tejidosJarabak, setTejidosJarabak] = useState(false);
     const[otrosAnalisis, setOtrosAnalisis] = useState("");
-    const[totalPrecio, setTotalPrecio] = useState(0);
-    const[metodoPago, setMetodoPago] = useState("");
-
-    
 
 
     const navigate = useNavigate();
@@ -118,95 +140,19 @@ const EditarOrdenVirtual = () => {
         return cadena.split('').map( letra => acentos[letra] || letra).join('').toString();	
     } 
 
+    const getCliente = ()=>{
+        let paciente = JSON.parse(localStorage.getItem("paciente"));
+        setIdPaciente(paciente.id);
+        setNombres(`${paciente.nombres} ${paciente.apellido_p} ${paciente.apellido_m}`);
+        setEdad(calcularEdad(paciente.f_nacimiento));
+        setFecha(paciente.f_nacimiento);
+        setCelular(paciente.celular);
+        setGenero(paciente.genero);
 
-    const getOneOrden = async() =>{
-        setLoading(true);
-        const oneOrden = await axios.get(`${Global.url}/oneOrdenVirtual/${id}`,{
-            headers:{
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        setIdPaciente(oneOrden.data.verOrden.id_paciente);
-        setIdOdontologo (oneOrden.data.verOrden.id_odontologo);
-        setConsulta(oneOrden.data.verOrden.consulta)
-
-        setBox18(oneOrden.data.verOrden.box18)
-        setBox17(oneOrden.data.verOrden.box17)
-        setBox16(oneOrden.data.verOrden.box16)
-        setBox15(oneOrden.data.verOrden.box15)
-        setBox14(oneOrden.data.verOrden.box14)
-        setBox13(oneOrden.data.verOrden.box13)
-        setBox12(oneOrden.data.verOrden.box12)
-        setBox11(oneOrden.data.verOrden.box11)
-
-        setBox21(oneOrden.data.verOrden.box21)
-        setBox22(oneOrden.data.verOrden.box22)
-        setBox23(oneOrden.data.verOrden.box23)
-        setBox24(oneOrden.data.verOrden.box24)
-        setBox25(oneOrden.data.verOrden.box25)
-        setBox26(oneOrden.data.verOrden.box26)
-        setBox27(oneOrden.data.verOrden.box27)
-        setBox28(oneOrden.data.verOrden.box28)
-
-        setBox48(oneOrden.data.verOrden.box48)
-        setBox47(oneOrden.data.verOrden.box47)
-        setBox46(oneOrden.data.verOrden.box46)
-        setBox45(oneOrden.data.verOrden.box45)
-        setBox44(oneOrden.data.verOrden.box44)
-        setBox43(oneOrden.data.verOrden.box43)
-        setBox42(oneOrden.data.verOrden.box42)
-        setBox41(oneOrden.data.verOrden.box41)
-
-        setBox31(oneOrden.data.verOrden.box31)
-        setBox32(oneOrden.data.verOrden.box32)
-        setBox33(oneOrden.data.verOrden.box33)
-        setBox34(oneOrden.data.verOrden.box34)
-        setBox35(oneOrden.data.verOrden.box35)
-        setBox36(oneOrden.data.verOrden.box36)
-        setBox37(oneOrden.data.verOrden.box37)
-        setBox38(oneOrden.data.verOrden.box38)
-
-        setSiConGuias(oneOrden.data.verOrden.siConGuias)
-        setNoConGuias(oneOrden.data.verOrden.noConGuias)
-
-        setOtrosAnalisis(oneOrden.data.verOrden.otrosAnalisis)
-        setTotalPrecio(oneOrden.data.verOrden.precio_final)
-        setMetodoPago(oneOrden.data.verOrden.metodoPago)
-
-        setElementos(JSON.parse(oneOrden.data.verOrden.listaItems))
-
-        if(oneOrden.data.status === "success"){
-            setLoading(true);
-            const onePaciente = await axios.get(`${Global.url}/onePaciente/${oneOrden.data.verOrden.id_paciente}`,{
-                headers:{
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            setNombres(`${onePaciente.data.nombres} ${onePaciente.data.apellido_p} ${onePaciente.data.apellido_m}`);
-            setEdad(calcularEdad(onePaciente.data.f_nacimiento));
-            setFecha(onePaciente.data.f_nacimiento);
-            setCelular(onePaciente.data.celular);
-            setGenero(onePaciente.data.genero);
-
-            if(onePaciente.data.genero == 0 ){
-                setVaron(true);
-            }else if (onePaciente.data.genero == 1){
-                setMujer(true);
-            }
-
-            const oneOdontologo = await axios.get(`${Global.url}/oneOdontologo/${oneOrden.data.verOrden.id_odontologo}`,{
-                headers:{
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            setOdontologo(`${oneOdontologo.data.nombres} ${oneOdontologo.data.apellido_p} ${oneOdontologo.data.apellido_m}`);
-            setCop(oneOdontologo.data.cop);
-            setIdOdontologo(oneOdontologo.data.id);
-            setEmailOdon(oneOdontologo.data.correo);
-            setLoading(false);
+        if(paciente.genero == 0 ){
+            setVaron(true);
+        }else if (paciente.genero == 1){
+            setMujer(true);
         }
     }
 
@@ -223,38 +169,13 @@ const EditarOrdenVirtual = () => {
 
     const getAllServicios= async () =>{
         setLoading(true);
-        const request = await axios.get(`${Global.url}/allServicios`,{
+        const request = await axios.get(`${Global.url}/allItemServices`,{
             headers:{
                 'Authorization': `Bearer ${token}`
             }
         });
         setServicios(request.data);
         setLoading(false);
-    };
-
-    const getAllItems= async () =>{
-        setLoading(true);
-        const request = await axios.get(`${Global.url}/allItemServices`,{
-            headers:{
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        setItems(request.data);
-        setLoading(false);
-    };
-
-    const llenarArray = (orden) => {
-        const ordenExisente = elementos.findIndex(
-            (ordenExisente) => ordenExisente.id_item === orden.id_item
-            );
-
-          if (ordenExisente === -1) {
-            setElementos([...elementos, orden]);
-          } else {
-            const nuevaOrden = [...elementos];
-            nuevaOrden[ordenExisente] = orden;
-            setElementos(nuevaOrden);
-          }
     };
 
     useEffect(()=>{
@@ -295,15 +216,31 @@ const EditarOrdenVirtual = () => {
         }
     }
 
-    const UpdateOrdenVirtual = async (e) => {
+    
+
+    const saveOrdenVirtual = async (e) => {
         e.preventDefault();
         let token = localStorage.getItem("token");
 
         const data = new FormData();
+
         data.append('id_paciente', idPaciente);
         data.append('id_odontologo', idOdontologo);
         data.append('consulta', consulta);
+        data.append('senosMaxilares', senosMaxilares === true ? 1 : 0);
+        data.append('atm', atm === true ? 1 : 0);
+        data.append('ortodoncia', ortodoncia === true ? 1 : 0);
+        data.append('areaPatologica', areaPatologica === true ? 1 : 0);
 
+        data.append('implantes', implantes === true ? 1 : 0);
+        data.append('localizacionDiente', localizacionDiente === true ? 1 : 0);
+        data.append('fracturaRadiocular', fracturaRadiocular === true ? 1 : 0);
+        data.append('endodoncia', endodoncia === true ? 1 : 0);
+        data.append('anatomia', anatomia === true ? 1 : 0);
+
+        data.append('sinAnalisis', sinAnalisis === true ? 1 : 0);
+        data.append('conAnalisis', conAnalisis === true ? 1 : 0);
+        
         data.append('box18', box18 === true ? 1 : 0);
         data.append('box17', box17 === true ? 1 : 0);
         data.append('box16', box16 === true ? 1 : 0);
@@ -342,17 +279,34 @@ const EditarOrdenVirtual = () => {
 
         data.append('siConGuias', siConGuias == true ? 1 : 0);
         data.append('noConGuias', noConGuias == true ? 1 : 0);
+        
+        data.append('radiografiaPanoramica', radiografiaPanoramica === true ? 1 : 0);
+        data.append('radiografiaCefalometrica', radiografiaCefalometrica === true ? 1 : 0);
+        data.append('radiografiaCerpal', radiografiaCerpal === true ? 1 : 0);
+        data.append('fotosExtraorales', fotosExtraorales === true ? 1 : 0);
+        data.append('estudioAtm', estudioAtm === true ? 1 : 0);
+        data.append('radiografiaPosterior', radiografiaPosterior === true ? 1 : 0);
 
-        data.append('listaItems', JSON.stringify(elementos));
-        data.append('precio_final', totalPrecio);
-        data.append('metodoPago', metodoPago === null ? "" : metodoPago);
+        data.append('otrosRadiografias', otrosRadiografias);
 
+        data.append('paquetesOrtodoncicosA', paquetesOrtodoncicosA === true ? 1 : 0);
+        data.append('paquetesOrtodoncicosB', paquetesOrtodoncicosB === true ? 1 : 0);
+        data.append('paquetesPediatricos', paquetesPediatricos === true ? 1 : 0);
+        data.append('ricketts', ricketts === true ? 1 : 0);
+        data.append('schwartz', schwartz === true ? 1 : 0);
+        data.append('steiner', steiner === true ? 1 : 0);
+        data.append('mcNamara', mcNamara === true ? 1 : 0);
+        data.append('tweed', tweed === true ? 1 : 0);
+        data.append('downs', downs === true ? 1 : 0);
+        data.append('bjork', bjork === true ? 1 : 0);
+        data.append('usp', usp === true ? 1 : 0);
+        data.append('tejidosJarabak', tejidosJarabak === true ? 1 : 0);
         data.append('otrosAnalisis', otrosAnalisis);
         data.append('estado', 0);
-        data.append('_method', 'PUT');
+
 
         try {
-            let respuesta= await axios.post(`${Global.url}/updateOrdenVirtual/${id}`, data,{
+            let respuesta = await axios.post(`${Global.url}/saveOrdenVirtual`, data,{
                 headers:{
                     'Authorization': `Bearer ${token}`
                 }
@@ -366,27 +320,26 @@ const EditarOrdenVirtual = () => {
             }
         } catch (error) {
             console.log(error.request.response);
+            // if(error.request.response.includes("telefono")){
+            //     Swal.fire('Telefono invalido', '', 'error');
+            // }else if(error.request.response.includes("celular")){
+            //     Swal.fire('Celular invalido', '', 'error');
+            // }else if(error.request.response.includes("nombre")){
+            //     Swal.fire('Nombre invalido', '', 'error');
+            // }else{
+            //     Swal.fire('Error no encontrado', '', 'error');
+            // }
         }
-
     }
-
-
-    useEffect(()=>{
-        const total = elementos.reduce((acumulador, producto) => {
-                return acumulador = acumulador + (producto.estado === true ? (parseFloat(producto.precio)) : 0);
-        }, 0); // 0 es el valor inicial del acumulador
-        setTotalPrecio(total);
-    }, [elementos]);
-
 
     return (
         <div className="container col-md-9 mt-6">
             {loading === false ?
             <div className="card">
                 <div className="card-header fw-bold">
-                    Editar orden Virtual:
+                    Agregar orden Virtual:
                 </div>
-                <form className="p-4 needs-validation" onSubmit={UpdateOrdenVirtual}>
+                <form className="p-4 needs-validation" onSubmit={saveOrdenVirtual}>
                     <div className="d-flex justify-content-between">
                         <div className="mb-3 col-md-12 content_img">
                            <img src={logo} alt="" />
@@ -398,7 +351,7 @@ const EditarOrdenVirtual = () => {
                             <div className='content_general mb-3 col-md-12'>
                                 <div className="mb-3 col-md-10 div_conten2">
                                     <label className="label_title">Nombres: </label>
-                                    <input className="form-control form-control3" disabled  required
+                                    <input className="form-control form-control3" disabled autoFocus required
                                         value={nombres}
                                         type="text"
                                         onChange={(e) => setNombres(e.target.value)}
@@ -406,7 +359,7 @@ const EditarOrdenVirtual = () => {
                                 </div>
                                 <div className="mb-3 col-md-2 div_conten">
                                     <label className="label_title">Edad: </label>
-                                    <input className="form-control form-control3" disabled  required
+                                    <input className="form-control form-control3" disabled autoFocus required
                                         value={edad}
                                         type="text"
                                         onChange={(e) => setEdad(e.target.value)}
@@ -417,7 +370,7 @@ const EditarOrdenVirtual = () => {
                             <div className='content_general mb-3 col-md-12'>
                                 <div className="mb-3 col-md-5 div_conten2">
                                     <label className="label_title">Fecha de Nacimiento: </label>
-                                    <input className="form-control form-control3" disabled  required
+                                    <input className="form-control form-control3" disabled autoFocus required
                                         value={fecha}
                                         type="text"
                                         onChange={(e) => setFecha(e.target.value)}
@@ -433,7 +386,7 @@ const EditarOrdenVirtual = () => {
 
                                 <div className="mb-3 col-md-4 div_conten">
                                     <label className="label_title">Telefono: </label>
-                                    <input className="form-control form-control3 form-control2"  disabled  required
+                                    <input className="form-control form-control3 form-control2"  disabled autoFocus required
                                         value={celular}
                                         type="text"
                                         onChange={(e) => setCelular(e.target.value)}
@@ -493,7 +446,84 @@ const EditarOrdenVirtual = () => {
                                 </div>
                             </div>
 
-                               
+                            <label className="form-label titulos_labels" style={{margin: '10px 0 10px 0'}}>TOMOGRAFIA DENTAL 3D</label>
+                            <div className='mb-3 col-md-12 div_general_box'>
+                                <div className="mb-3 col-md-4 div_secundario">
+                                    <label className="label_title col-md-12 ">CAMPO 3D GRANDE</label>
+                                    <label className="label_title col-md-12 ">(13x14 - 13x16)</label>
+                                    
+                                    <div className='content_checkBox chsscjcon'>
+                                        <input type="checkbox" className='on_active' onChange={(e) => setSenosMaxilares(e.target.checked)} checked={senosMaxilares}/>
+                                        <span className=''>Senos Maxilares</span>
+                                    </div>
+
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active'  onChange={(e) => setAtm(e.target.checked)} checked={atm}/>
+                                        <span className="">A.T.M (BA + BC)</span>
+                                    </div>
+
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active' onChange={(e) => setOrtodoncia(e.target.checked)} checked={ortodoncia}/>
+                                        <span className="">Ortodoncia-Ortognática</span>
+                                    </div>
+                                    <img className="img_boxes" src={grande} alt="" />
+                                </div>
+                                <div className="mb-3 col-md-4 div_secundario">
+                                    <label className="label_title col-md-12 ">CAMPO 3D MEDIANO</label>
+                                    <label className="label_title col-md-12 ">(8x6- 13x10)</label>
+                                    
+                                    <div className='content_checkBox chsscjcon'>
+                                        <input type="checkbox" className='on_active'  onChange={(e) => setAreaPatologica(e.target.checked)} checked={areaPatologica}/>
+                                        <span className=''>Area Patológica (Zona)</span>
+                                    </div>
+
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active'  onChange={(e) => setImplantes(e.target.checked)} checked={implantes}/>
+                                        <span className="">Implantes</span>
+                                    </div>
+
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active'  onChange={(e) => setLocalizacionDiente(e.target.checked)} checked={localizacionDiente}/>
+                                        <span className="">Localizacion de diente</span>
+                                    </div>
+
+                                    <img className="img_boxes" src={mediano} alt=""/>
+                                
+                                </div>
+                                <div className="mb-3 col-md-4 div_secundario">
+                                    <label className="label_title col-md-12 ">CAMPO 3D PEQUEÑO</label>
+                                    <label className="label_title col-md-12 ">(4x4 -7x6)</label>
+                                    
+                                    <div className='content_checkBox chsscjcon'>
+                                        <input type="checkbox" className='on_active'  onChange={(e) => setFracturaRadiocular(e.target.checked)} checked={fracturaRadiocular}/>
+                                        <span className=''>Fractura radiocular</span>
+                                    </div>
+
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active' onChange={(e) => setEndodoncia(e.target.checked)} checked={endodoncia}/>
+                                        <span className="">Endodoncia</span>
+                                    </div>
+
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active'onChange={(e) => setAnatomia(e.target.checked)} checked={anatomia}/>
+                                        <span className="">Anatomia endodontica</span>
+                                    </div>
+
+                                    <img className="img_boxes" src={pequeno} alt="" />
+                                </div>
+                            </div>
+
+                            <div className='mb-3 col-md-12 div_bot_box'>
+                                <div className='content_checkBox chk2'>
+                                    <input type="checkbox" className='on_active' value={sinAnalisis} onChange={(e) => setSinAnalisis(e.target.checked)} checked={sinAnalisis}/>
+                                    <span className=''>Sin analisis(Solo Software)</span>
+                                </div>
+
+                                <div className='content_checkBox'>
+                                    <input type="checkbox" className='on_active' value={conAnalisis} onChange={(e) => setConAnalisis(e.target.checked)} checked={conAnalisis}/>
+                                    <span className="">Con analisis</span>
+                                </div>
+                            </div>
                             <label className="form-label titulos_labels" style={{margin: '10px 0 10px 0'}}>IMPLANTES / ENDODONCIA</label>
 
                             <div className='mb-3 col-md-12 div_box_generl_bot'>
@@ -635,62 +665,137 @@ const EditarOrdenVirtual = () => {
                             </div>
 
                             <div className='mb-3 col-md-12 div_bot_box2'>
-                                <span className='label_title2'>MUY IMPORTANTE: ¿El paciente es enviado con guias?</span> 
-                                <div className='content_checkBox2'>
+                                <span className='label_title2'>MUY IMPORTANTE: ¿El paciente es enviado con guias?</span>
+                                <div className='content_checkBox'>
                                     <span className="">Si</span>
                                     <input type="checkbox" className='on_active'  value={siConGuias} onChange={(e) => setSiConGuias(e.target.checked)} checked={siConGuias} />
                                 </div>
-                                <div className='content_checkBox2'>
+                                <div className='content_checkBox'>
                                     <span className="">No</span>
                                     <input type="checkbox" className='on_active'  value={noConGuias} onChange={(e) => setNoConGuias(e.target.checked)} checked={noConGuias} />
                                 </div>
                             </div>
 
-                            {/* {servicios.map((servicio) => (
-                            <div key={servicio.id}>
-                                <label className="form-label titulos_labels" style={{margin: '10px 0 10px 0'}}>{servicio.nombre}</label> <BsArrowUpCircle className='icon_titles' />
-                                <div  className='mb-3 col-md-12 div_general_box'>
-                                    <ul className="mb-3 col-md-12 div_secundario">
-                                        {items.map((item) => (
-                                        item.id_servicio === servicio.id ?   
-                                        <li key={item.id} className='content_checkBox'>
-                                            <input type="checkbox" 
-                                            checked={elementos.find(estado => estado.id_item === item.id)?.estado || false}
-                                            id={"checkboxi"+item.id} className='on_active'  onChange={(e)=>{llenarArray({id_item: item.id, estado: e.target.checked, precio: item.precio_venta})}}
-                                            />
-                                            <span className=''>{item.nombre}</span>
-                                        </li>
-                                        : ""
-                                        ))}
-                                    </ul>
+                            <label className="form-label titulos_labels" style={{margin: '10px 0 10px 0'}}>RADIOGRACIAS EXTRAORALES</label>
+
+                            <div className='mb-3 col-md-12 div_general_box'>
+                                <div className="mb-3 col-md-6 div_secundario">
+                                    <div className='content_checkBox chsscjcon'>
+                                        <input type="checkbox" className='on_active' value={radiografiaPanoramica} onChange={(e) => setRadiografiaPanoramica(e.target.checked)} checked={radiografiaPanoramica}/>
+                                        <span className=''>Radiografia Panoramica</span>
+                                    </div>
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active' value={radiografiaCefalometrica} onChange={(e) => setRadiografiaCefalometrica(e.target.checked)} checked={radiografiaCefalometrica}/>
+                                        <span className="">Radiografia Cefalometrica</span>
+                                    </div>
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active' value={radiografiaCerpal} onChange={(e) => setRadiografiaCerpal(e.target.checked)} checked={radiografiaCerpal}/>
+                                        <div className='content_span_2'>
+                                            <span className="">Radiografia Carpal con Análisis</span>
+                                            <span className="content_span_2__edad_color">(Edad)</span>
+                                        </div>
+                                    </div>
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active' value={fotosExtraorales} onChange={(e) => setFotosExtraorales(e.target.checked)} checked={fotosExtraorales}/>
+                                        <span className="">Fotos Extraorales</span>
+                                    </div>
+                                </div>
+                                <div className="mb-3 col-md-6 div_secundario">
+                                    <div className='content_checkBox chsscjcon'>
+                                        <input type="checkbox" className='on_active' value={estudioAtm} onChange={(e) => setEstudioAtm(e.target.checked)} checked={estudioAtm}/>
+                                        <span className=''>Estudio ATM <span className='color_Edad'>(Boca Abierta y cerrada)</span></span>
+                                    </div>
+
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active' value={radiografiaPosterior} onChange={(e) => setRadiografiaPosterior(e.target.checked)} checked={radiografiaPosterior}/>
+                                        <span className="">Radiografia Posteior - Interior <span className='color_Edad'>(Frontal)</span></span>
+                                    </div>
+
+                                    <div className='content_checkBox'>
+                                        <span className="">Otros</span>
+                                        <input className="form-control form-control3"  required 
+                                        value={otrosRadiografias}
+                                        type="text"
+                                        onChange={(e) => setOtrosRadiografias(e.target.value)}
+                                    />
+                                    </div>
                                 </div>
                             </div>
-                            ))} */}
-                            
-                            <Accordion defaultActiveKey={1}>
-                                {servicios.map((servicio) => (
-                                <Accordion.Item eventKey={servicio.id} key={servicio.id}>
-                                    <Accordion.Header> <label className="form-label titulos_labels" style={{margin: '10px 0 10px 0'}}>{servicio.nombre}</label></Accordion.Header>
-                                    <Accordion.Body>
-                                        <div  className='mb-3 col-md-12 div_general_box'>
-                                            <ul className="mb-3 col-md-12 div_secundario">
-                                                {items.map((item) => (
-                                                item.id_servicio === servicio.id ?   
-                                                <li key={item.id} className='content_checkBox'>
-                                                    <input type="checkbox" 
-                                                    checked={elementos.find(estado => estado.id_item === item.id)?.estado || false}
-                                                    id={"checkboxi"+item.id} className='on_active'  onChange={(e)=>{llenarArray({id_item: item.id, estado: e.target.checked, precio: item.precio_venta})}}
-                                                    />
-                                                    <span className=''>{item.nombre}</span>
-                                                </li>
-                                                : ""
-                                                ))}
-                                            </ul>
+
+                            <label className="form-label titulos_labels" style={{margin: '10px 0 10px 0'}}>PAQUETES ORTODONCICOS</label>
+                            <div className='mb-3 col-md-12 div_general_box'>
+                                <div className="mb-3 col-md-12 div_secundario">
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active on_active2' value={paquetesOrtodoncicosA} onChange={(e) => setPaquetesOrtodoncicosA(e.target.checked)} checked={paquetesOrtodoncicosA}/>
+                                        <div className='checkbox_content_box checkbox_content_box4'>
+                                            <span className='checkbox_content_box__1'>Paquetes Ortodoncicos A</span>
+                                            <span className='checkbox_content_box__2'>(Panoramica, cefalometrica, 2 estudios cefalometricos, fotos extraorales, fotos intraorales)</span>
                                         </div>
-                                    </Accordion.Body>
-                                </Accordion.Item>
-                                ))}
-                            </Accordion>
+                                    </div>
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active on_active2' value={paquetesOrtodoncicosB} onChange={(e) => setPaquetesOrtodoncicosB(e.target.checked)} checked={paquetesOrtodoncicosB}/>
+                                        <div className='checkbox_content_box checkbox_content_box4'>
+                                            <span className='checkbox_content_box__1'>Paquetes Ortodoncicos B</span>
+                                            <span className='checkbox_content_box__2'>(Panoramica, cefalometrica, 1 estudio cefalometrico, fotos extraorales)</span>
+                                        </div>
+                                    </div>
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active on_active2' value={paquetesPediatricos} onChange={(e) => setPaquetesPediatricos(e.target.checked)} checked={paquetesPediatricos}/>
+                                        <div className='checkbox_content_box checkbox_content_box4'>
+                                            <span className='checkbox_content_box__1'>Paquetes Pediatricos</span>
+                                            <span className='checkbox_content_box__2'>(Panoramica, cefalometrica, 1 estudio cefalometrico, radiografia carpal con analisis, fotos extraorales e intraorales)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <label className="form-label titulos_labels" style={{margin: '10px 0 10px 0'}}>ANÁLISIS CEFALOMETRICOS DIGITALES</label>
+                            <div className='mb-3 col-md-12 div_general_box div_general_box2'>
+                                <div className="mb-3 col-md-3 div_secundario">
+                                    <div className='content_checkBox chsscjcon'>
+                                        <input type="checkbox" className='on_active' value={ricketts} onChange={(e) => setRicketts(e.target.checked)} checked={ricketts}/>
+                                        <span className=''>Ricketts</span>
+                                    </div>
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active' value={schwartz} onChange={(e) => setSchwartz(e.target.checked)} checked={schwartz}/>
+                                        <span className="">Schwartz</span>
+                                    </div>
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active' value={steiner} onChange={(e) => setSteiner(e.target.checked)} checked={steiner}/>
+                                        <div className='content_span_2'>
+                                            <span className="">Steiner</span>
+                                        </div>
+                                    </div>
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active' value={mcNamara} onChange={(e) => setMcNamara(e.target.checked)} checked={mcNamara}/>
+                                        <span className="">Mc Namara</span>
+                                    </div>
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active' value={tweed} onChange={(e) => setTweed(e.target.checked)} checked={tweed}/>
+                                        <span className="">Tweed</span>
+                                    </div>
+                                </div>
+                                <div className="mb-3 col-md-3 div_secundario div_secundario2">
+                                    <div className='content_checkBox chsscjcon'>
+                                        <input type="checkbox" className='on_active' value={downs} onChange={(e) => setDowns(e.target.checked)} checked={downs}/>
+                                        <span className=''>Downs</span>
+                                    </div>
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active' value={bjork} onChange={(e) => setBjork(e.target.checked)} checked={bjork}/>
+                                        <span className="">Bjork</span>
+                                    </div>
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active' value={usp} onChange={(e) => setUsp(e.target.checked)} checked={usp}/>
+                                        <div className='content_span_2'>
+                                            <span className="">U.S.P</span>
+                                        </div>
+                                    </div>
+                                    <div className='content_checkBox'>
+                                        <input type="checkbox" className='on_active' value={tejidosJarabak} onChange={(e) => setTejidosJarabak(e.target.checked)} checked={tejidosJarabak}/>
+                                        <span className="">Tejidos-Jarabak</span>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div className='mb-3 col-md-12 div_general_box div_general_box2'>
                                 <div className="mb-3 col-md-8 div_secundario">
                                     <textarea type="text" className="form-control areas_textos" cols="50"  required  value={otrosAnalisis} onChange={(e) => setOtrosAnalisis(e.target.value)} placeholder='Otros:'></textarea>
@@ -698,12 +803,9 @@ const EditarOrdenVirtual = () => {
                             </div>
                        </div>
                     </div>
-
-                   
-
                     <div className="d-flex gap-2 contentBtnRegistrar">
                         <input type="hidden" name="oculto" value="1" />
-                        <Link to="/admin/ordenVirtual" className="btn btn-danger btnCancelar">Cancelar</Link>
+                        <Link to="/admin/ordenVirtual/validar" className="btn btn-danger btnCancelar">Cancelar</Link>
                         <input type="submit" className="btn btn-primary btnRegistrar" value="Continuar" />
                     </div>
                 </form>
@@ -722,4 +824,4 @@ const EditarOrdenVirtual = () => {
     )
 }
 
-export default EditarOrdenVirtual
+export default AgregarOrdenVirtual

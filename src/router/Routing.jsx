@@ -20,6 +20,8 @@ import ListaServicios from '../components/private/tables/servicios/ListaServicio
 import AgregarServicio from '../components/private/tables/servicios/AgregarServicio';
 import EditarServicio from '../components/private/tables/servicios/EditarServicio';
 import AgregarItem from '../components/private/tables/servicios/AgregarItem';
+import EditarItem from '../components/private/tables/servicios/EditarItem';
+import EditarOrdenVirtual from '../components/private/tables/orden_virtual/EditarOrdenVirtual';
 
 export const Routing = () => {
   return (
@@ -60,12 +62,13 @@ export const Routing = () => {
                 <Route path='servicios/agregar/servicio' element={<AgregarServicio/>}/>
                 <Route path='servicios/editar/:id' element={<EditarServicio/>}/>     
                 <Route path='servicios/agregar/item' element={<AgregarItem/>}/>
+                <Route path='servicios/editar/item/:id' element={<EditarItem/>}/>     
 
                 {/* ORDEN VIRTUAL */}
                 <Route path='ordenVirtual' element={<ListaOrdenVirtual/>}/>
                 <Route path='ordenVirtual/validar' element={<ValidarOrdenVirtual/>}/>
                 <Route path='ordenVirtual/agregar' element={<AgregarOrdenVirtual/>}/>
-                <Route path='ordenVirtual/editar' element={<AgregarOrdenVirtual/>}/>
+                <Route path='ordenVirtual/editar/:id' element={<EditarOrdenVirtual/>}/>
             </Route>
             
             <Route path='*' element={

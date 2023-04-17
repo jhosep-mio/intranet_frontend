@@ -2,8 +2,24 @@
 
 .nosotros2{
     padding: 50px 80px;
-
     display: flex;
+
+    &:hover &__img picture{
+
+        animation: bg 300ms linear forwards;
+        
+        @keyframes bg{
+            from{
+                background: radial-gradient(circle, rgba(89,86,92,0.7848389355742297) 0%, rgba(221,49,49,0) 54%);
+            }
+
+            to{
+                background: radial-gradient(circle, rgba(232,205,255,0.7848389355742297) 0%, rgba(221,49,49,0) 54%);
+            }
+        }
+    }
+
+    
 
     &__main{
         width: 50%;
@@ -44,6 +60,7 @@
             background: rgb(89,86,92);
             background: radial-gradient(circle, rgba(89,86,92,0.7848389355742297) 0%, rgba(221,49,49,0) 54%);
             display: block;
+            transition: all .3s;
         }
 
         img{

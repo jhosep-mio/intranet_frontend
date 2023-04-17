@@ -111,7 +111,7 @@ const EditarPaciente = () => {
                 Swal.fire('Agreado correctamente', '', 'success');
                 navigate('/admin/clientes');
             }else{
-                Swal.fire('Error al agregar el registro', '', 'error');
+                Swal.fire('Error al realizar la edicion', '', 'error');
             }
         } catch (error) {
             console.log(error.response.request.response)
