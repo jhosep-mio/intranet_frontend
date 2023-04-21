@@ -12,7 +12,10 @@ const AgregarItem = () => {
 
     const [id_servicio, setId_servicio] = useState(1);
     const [nombre, setNombre] = useState("");
-    const [precio_venta, setPrecio_venta] = useState("");
+
+    const [precio_impresion, setPrecio_impresion] = useState("");
+    const [precio_digital, setPrecio_digital] = useState("");
+
     const [comision_impreso, setComision_impreso] = useState("");
     const [comision_digital, setComision_digital] = useState("");
     const [insumos1, setInsumos1] = useState("");
@@ -34,7 +37,10 @@ const AgregarItem = () => {
         const data = new FormData();
         data.append('id_servicio', id_servicio);
         data.append('nombre', nombre);
-        data.append('precio_venta', precio_venta);
+
+        data.append('precio_impresion', precio_impresion);
+        data.append('precio_digital', precio_digital);
+
         data.append('comision_impreso', comision_impreso);
         data.append('comision_digital', comision_digital);
         data.append('insumos1', insumos1);
@@ -98,7 +104,7 @@ const AgregarItem = () => {
                                 </div>
                             </div>
                             <div className='content_general mb-3 col-md-12'>
-                                <div className="mb-3 col-md-6 div_conten2">
+                                <div className="mb-3 col-md-8 div_conten2">
                                     <label className="label_title col-md-5">Servicio: </label>
                                     <select value={id_servicio} type="text" className="form-select2"  autoFocus required onChange={(e)=>{setId_servicio(e.target.value)}}>
                                         {servicios.map((clini) => (
@@ -107,20 +113,31 @@ const AgregarItem = () => {
                                         }
                                     </select>
                                 </div>
-                                <div className="mb-3 col-md-6 div_conten">
-                                    <label className="label_title col-md-5">Precio: </label>
+                            </div>
+                            <div className='content_general mb-3 col-md-12'>
+                                <div className="mb-3 col-md-6 div_conten2">
+                                    <label className="label_title col-md-5">Precio impresion: </label>
                                     <input className="form-control form-control3" autoFocus required
-                                        value={precio_venta}
+                                        value={precio_impresion}
                                         type="number"
                                         step="0.01"
-                                        onChange={(e) => setPrecio_venta(e.target.value)}
+                                        onChange={(e) => setPrecio_impresion(e.target.value)}
+                                    />
+                                </div>
+                                <div className="mb-3 col-md-6 div_conten">
+                                    <label className="label_title col-md-5">Precio digital: </label>
+                                    <input className="form-control form-control3" autoFocus required
+                                        value={precio_digital}
+                                        type="number"
+                                        step="0.01"
+                                        onChange={(e) => setPrecio_digital(e.target.value)}
                                     />
                                 </div>
                             </div>
                             <div className='content_general mb-3 col-md-12'>
                                 <div className="mb-3 col-md-6 div_conten2">
-                                    <label className="label_title col-md-5">Comision de impresion: </label>
-                                    <input className="form-control form-control3" autoFocus 
+                                    <label className="label_title col-md-5">Comision impresion: </label>
+                                    <input className="form-control form-control3" autoFocus required
                                         value={comision_impreso}
                                         type="number"
                                         step="0.01"
@@ -130,7 +147,7 @@ const AgregarItem = () => {
 
                                 <div className="mb-3 col-md-6 div_conten">
                                     <label className="label_title col-md-5">Comision Digital: </label>
-                                    <input className="form-control form-control3" autoFocus 
+                                    <input className="form-control form-control3" autoFocus required
                                         value={comision_digital}
                                         type="number"
                                         step="0.01"

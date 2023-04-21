@@ -7,11 +7,13 @@ import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import Pagination from 'react-bootstrap/Pagination';
 import Swal from 'sweetalert2';
+import { BsCloudUploadFill } from "react-icons/bs";
 
 
 const ListaOrdenVirtual = () => {
     const [ordenes, setOrdenes] = useState( [] );
     const [itemPagination, setItemPagination] = useState( [] );
+    const [servicios, setservicios] = useState( [] );
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
     const [paginaActual, setpaginaActual] = useState(1);
@@ -20,13 +22,23 @@ const ListaOrdenVirtual = () => {
     let token = localStorage.getItem("token");
 
     useEffect ( () =>{
-        const filter2 = ordenes.filter(cate => quitarAcentos(cate.paciente.toLowerCase()).includes(quitarAcentos(search.toLowerCase())));
+        const filter2 = ordenes.filter((odo) =>{
+            return (
+            quitarAcentos(`${odo.paciente} ${odo.paciente_apellido_p} ${odo.paciente_apellido_m}`.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
+            quitarAcentos(`${odo.odontologo} ${odo.odontologo_apellido_p} ${odo.odontologo_apellido_m}`.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
+            quitarAcentos(new Date(odo.created_at).toLocaleDateString()).includes(quitarAcentos(search.toLowerCase())) ||
+            quitarAcentos(odo.estado === 0 ? "creado" : odo.estado === 1 ? "pendiente" : odo.estado === 2 ? "Realizado" : "").includes(quitarAcentos(search.toLowerCase())) ||
+            odo.copOdontologo.toString().includes(search)
+            )
+        });
+        
         setCargandoBusqueda(filter2.length);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [search]);
 
     useEffect ( () =>{
         getAllOrdenes();
+        getAllservicios();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -90,10 +102,10 @@ const ListaOrdenVirtual = () => {
 
         const filter = ordenes.filter((odo) =>{
             return (
-            quitarAcentos(odo.paciente.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
-            quitarAcentos(odo.documentoPaciente.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
-            quitarAcentos(odo.odontologo.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
-            quitarAcentos(odo.estado === 0 ? "creado" : odo.estado === 1 ? "pendiente" : odo.estado === 2 ? "terminado" : "").includes(quitarAcentos(search.toLowerCase())) ||
+            quitarAcentos(`${odo.paciente} ${odo.paciente_apellido_p} ${odo.paciente_apellido_m}`.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
+            quitarAcentos(`${odo.odontologo} ${odo.odontologo_apellido_p} ${odo.odontologo_apellido_m}`.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
+            quitarAcentos(new Date(odo.created_at).toLocaleDateString()).includes(quitarAcentos(search.toLowerCase())) ||
+            quitarAcentos(odo.estado === 0 ? "creado" : odo.estado === 1 ? "pendiente" : odo.estado === 2 ? "realizado" : "").includes(quitarAcentos(search.toLowerCase())) ||
             odo.copOdontologo.toString().includes(search)
             )
         });
@@ -141,6 +153,19 @@ const ListaOrdenVirtual = () => {
         }
     }
 
+    const getAllservicios= async () =>{
+        setLoading(true);
+
+        const request = await axios.get(`${Global.url}/allServicios`,{
+            headers:{
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        setservicios(request.data);
+        setLoading(false);
+    };
+
     return (
         <div className="container mt-6 ms-5-auto">
             <div className="row justify-content-center">
@@ -173,13 +198,11 @@ const ListaOrdenVirtual = () => {
                                         {/* <!-- 2 --> */}
                                         <th scope="col" className="text-center">Paciente</th>
 
-                                        <th scope="col" className="text-center">T. Doc</th>
+                                        <th scope="col" className="text-center">Tp. Estudio</th>
 
-                                        <th scope="col" className="text-center">Documento</th>
+                                        <th scope="col" className="text-center">F. Creacion</th>
 
                                         <th scope="col" className="text-center">Doctor</th>
-
-                                        <th scope="col" className="text-center">C.O.P</th>
 
                                         <th scope="col" className="text-center">Estado</th>
                                         {/* <!-- 3 --> */}
@@ -187,40 +210,35 @@ const ListaOrdenVirtual = () => {
                                     </tr>
                                 </thead>
                                 <tbody id="tableBody">
-                                    { loading === false ? filterDate().map( (orden)=>(
+                                    { loading === false ? filterDate().map((orden)=>(
                                         <tr key={orden.id}>
                                             
                                             <td  className="text-center">
                                                 {orden.id}
                                             </td>
 
-                                            <td  className="text-center">
-                                                {orden.paciente}
+                                            <td  className="text-center" style={{maxWidth: '100px'}}>
+                                                {orden.paciente} {orden.paciente_apellido_p} {orden.paciente_apellido_m}
                                             </td>
 
-                                            <td  className="text-center">
-                                                {orden.TipoDocumentoPaciente === 0 ?
-                                                "DNI"
-                                                : orden.TipoDocumentoPaciente === 1 ?
-                                                 "RUC"
-                                                : orden.TipoDocumentoPaciente === 2 ?
-                                                 "Pasaporte" 
-                                                : orden.TipoDocumentoPaciente === 3 ?
-                                                 "Car. Extranjeria" 
-                                                : ""}
-                                                    
+                                            <td  className="text-center" style={{maxWidth: '200px'}}>
+                                                {JSON.parse(orden.listaItems).map((lista) =>(
+                                                    servicios.map((serv) => (
+                                                        lista.estado === true && serv.id === lista.id_servicio?
+                                                        <li style={{}}>{serv.nombre}</li>
+                                                        :""
+                                                    ))
+                                                ))}                 
+                                            </td>
+                                           
+                                            <td  className="text-center" style={{maxWidth: '100px'}}>
+                                                {new Date(orden.created_at).toLocaleDateString()}
+                                                <br/>
+                                                {new Date(orden.created_at).toLocaleTimeString()}
                                             </td>
 
-                                            <td  className="text-center">
-                                                {orden.documentoPaciente}
-                                            </td>
-
-                                            <td  className="text-center">
-                                                {orden.odontologo}
-                                            </td>
-
-                                            <td  className="text-center">
-                                                {orden.copOdontologo}
+                                            <td  className="text-center" style={{maxWidth: '100px'}}>
+                                                {orden.odontologo} {orden.odontologo_apellido_p} {orden.odontologo_apellido_m}
                                             </td>
 
                                             <td  className="text-center">
@@ -229,13 +247,18 @@ const ListaOrdenVirtual = () => {
                                                 :orden.estado === 1 ?
                                                 <input style={{background: 'rgb(191, 191, 31)'}} className="button_estado" type="text" value="Pendiente"/>
                                                 :orden.estado === 2 ?
-                                                <input style={{background: '#D23741'}} className="button_estado" type="text" value="Terminado"/>
+                                                <input style={{background: '#D23741'}} className="button_estado" type="text" value="Realizado"/>
                                                 : ""
                                                 }
                                             </td>
 
                                             {/* <!-- 9. Opciones --> */}
                                             <td className="text-center">
+                                                { orden.estado === 2 ?
+                                                <Link className="text-success" to={`/admin/archivosEstudio/${orden.id}`} style={{marginRight: '10px'}}>
+                                                    <BsCloudUploadFill style={{fontSize: '20px'}}/>
+                                                </Link>
+                                                : ""}
                                                 <Link className="text-success" to={`/admin/ordenVirtual/editar/${orden.id}`}>
                                                 <FontAwesomeIcon icon={faPencil}/>
                                                 </Link>

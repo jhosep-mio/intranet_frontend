@@ -13,7 +13,10 @@ const EditarItem = () => {
 
     const [id_servicio, setId_servicio] = useState(1);
     const [nombre, setNombre] = useState("");
-    const [precio_venta, setPrecio_venta] = useState("");
+
+    const [precio_impresion, setPrecio_impresion] = useState("");
+    const [precio_digital, setPrecio_digital] = useState("");
+
     const [comision_impreso, setComision_impreso] = useState("");
     const [comision_digital, setComision_digital] = useState("");
     const [insumos1, setInsumos1] = useState("");
@@ -47,9 +50,13 @@ const EditarItem = () => {
         
         data.append('id_servicio', id_servicio);
         data.append('nombre', nombre);
-        data.append('precio_venta', precio_venta);
+
+        data.append('precio_impresion', precio_impresion);
+        data.append('precio_digital', precio_digital);
+
         data.append('comision_impreso', comision_impreso === null ? "" : comision_impreso);
         data.append('comision_digital', comision_digital === null ? "" : comision_digital);
+
         data.append('insumos1', insumos1 === null ? "" : insumos1);
         data.append('insumos2', insumos2 === null ? "" : insumos2);
         data.append('insumos3', insumos3 === null ? "" : insumos3);
@@ -94,7 +101,10 @@ const EditarItem = () => {
 
         setId_servicio(oneItem.data.id_servicio);
         setNombre(oneItem.data.nombre);
-        setPrecio_venta(oneItem.data.precio_venta);
+
+        setPrecio_impresion(oneItem.data.precio_impresion);
+        setPrecio_digital(oneItem.data.precio_digital);
+
         setComision_impreso(oneItem.data.comision_impreso);
         setComision_digital(oneItem.data.comision_digital);
         setInsumos1(oneItem.data.insumos1);
@@ -141,7 +151,7 @@ const EditarItem = () => {
                                 </div>
                             </div>
                             <div className='content_general mb-3 col-md-12'>
-                                <div className="mb-3 col-md-6 div_conten2">
+                                <div className="mb-3 col-md-8 div_conten2">
                                     <label className="label_title col-md-5">Servicio: </label>
                                     <select value={id_servicio} type="text" className="form-select2"  autoFocus required onChange={(e)=>{setId_servicio(e.target.value)}}>
                                         {servicios.map((clini) => (
@@ -150,13 +160,24 @@ const EditarItem = () => {
                                         }
                                     </select>
                                 </div>
-                                <div className="mb-3 col-md-6 div_conten">
-                                    <label className="label_title col-md-5">Precio: </label>
+                            </div>
+                            <div className='content_general mb-3 col-md-12'>
+                                <div className="mb-3 col-md-6 div_conten2">
+                                    <label className="label_title col-md-5">Precio impresion: </label>
                                     <input className="form-control form-control3" autoFocus required
-                                        value={precio_venta}
+                                        value={precio_impresion}
                                         type="number"
                                         step="0.01"
-                                        onChange={(e) => setPrecio_venta(e.target.value)}
+                                        onChange={(e) => setPrecio_impresion(e.target.value)}
+                                    />
+                                </div>
+                                <div className="mb-3 col-md-6 div_conten">
+                                    <label className="label_title col-md-5">Precio digital: </label>
+                                    <input className="form-control form-control3" autoFocus required
+                                        value={precio_digital}
+                                        type="number"
+                                        step="0.01"
+                                        onChange={(e) => setPrecio_digital(e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -225,8 +246,8 @@ const EditarItem = () => {
                     </div>    
                     <div className="d-flex gap-2 contentBtnRegistrar">
                             <input type="hidden" name="oculto" value="1" />
-                            <Link to="/admin/clinicas" className="btn btn-danger btnCancelar">Cancelar</Link>
-                            <input type="submit" className="btn btn-primary btnRegistrar" value="Editar" />
+                            <Link to="/admin/servicios" className="btn btn-danger btnCancelar">Cancelar</Link>
+                            <input type="submit" className="btn btn-primary btnRegistrar" value="Grabar" />
                         </div>
                 </form>
                 : <div className="dot-spinner dot-spinner4">
