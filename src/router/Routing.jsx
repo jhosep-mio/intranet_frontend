@@ -22,6 +22,8 @@ import EditarServicio from '../components/private/tables/servicios/EditarServici
 import AgregarItem from '../components/private/tables/servicios/AgregarItem';
 import EditarItem from '../components/private/tables/servicios/EditarItem';
 import EditarOrdenVirtual from '../components/private/tables/orden_virtual/EditarOrdenVirtual';
+import ArchivosEstudio from '../components/private/tables/archivos/ArchivosEstudio';
+import { Resultados } from '../components/public/pages/Resultados';
 
 export const Routing = () => {
   return (
@@ -40,6 +42,7 @@ export const Routing = () => {
             
 
             {/* ADMINSITRADOR */}
+            <Route path='/resultados' element={<Resultados/>}></Route>
 
             <Route path='/login' element={<Login/>}></Route>
             
@@ -69,6 +72,9 @@ export const Routing = () => {
                 <Route path='ordenVirtual/validar' element={<ValidarOrdenVirtual/>}/>
                 <Route path='ordenVirtual/agregar' element={<AgregarOrdenVirtual/>}/>
                 <Route path='ordenVirtual/editar/:id' element={<EditarOrdenVirtual/>}/>
+
+                {/* ORDEN VIRTUAL */}
+                <Route path='archivosEstudio/:id' element={<ArchivosEstudio/>}/>
             </Route>
             
             <Route path='*' element={

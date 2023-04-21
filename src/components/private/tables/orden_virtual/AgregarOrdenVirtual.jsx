@@ -4,31 +4,29 @@ import axios from 'axios';
 import { Global } from '../../../../helper/Global';
 import Swal from 'sweetalert2';
 import logo from "./../../../../assets/logos/logo.png";
-
+import Accordion from 'react-bootstrap/Accordion';
+import { BsPlusCircleFill } from "react-icons/bs";
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import AgregarOdontologo from './AgregarOdontologo';
 
 const AgregarOrdenVirtual = () => {
 
-    useEffect(() =>{
-        getCliente();
-        getAllOdontologos();
-        getAllServicios();
-        getAllItems();
-    },[])
-
-
+    const [loading, setLoading] = useState(true);
     let token = localStorage.getItem("token");
+
+    const[impresionCheck, setImpresionCheck] = useState([]);
 
     const[varon, setVaron] = useState(false);
     const[mujer, setMujer] = useState(false);
-
+    const[idServicio, setIdServicio] = useState(0);
     const[odontologos, setOdontologos] = useState([]);
     const[servicios, setServicios] = useState([]);
     const[items, setItems] = useState([]);
     const [elementos, setElementos] = useState([]);
+    const[botonDoctor, setBotonDoctor] = useState(false)
 
-    const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
-
     const[nombres, setNombres] = useState("");
     const[edad, setEdad] = useState(0);
     const[celular, setCelular] = useState(0);
@@ -37,7 +35,6 @@ const AgregarOrdenVirtual = () => {
     const[odontologo, setOdontologo] = useState("");
     const[cop, setCop] = useState("");
     const[emailOdon, setEmailOdon] = useState("");
-
 
     //ORDEN VIRTUAL
     const[idPaciente,setIdPaciente] = useState(0);
@@ -80,15 +77,20 @@ const AgregarOrdenVirtual = () => {
     const[box37, setBox37] = useState(false);
     const[box38, setBox38] = useState(false);
 
-    const[siConGuias, setSiConGuias] = useState(false);
+    const[siConGuias, setSiConGuias] = useState(true);
     const[noConGuias, setNoConGuias] = useState(false);
 
 
     const[otrosAnalisis, setOtrosAnalisis] = useState("");
     const[totalPrecio, setTotalPrecio] = useState(0);
     const[metodoPago, setMetodoPago] = useState("");
+    const[agregarComisiones, setAgregarComisiones] = useState(false);
 
+    const [show, setShow] = useState(false);
 
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    
     const navigate = useNavigate();
 
     function calcularEdad(fecha_nacimiento) {
@@ -146,6 +148,7 @@ const AgregarOrdenVirtual = () => {
             }
         });
         setServicios(request.data);
+        setIdServicio(request.data[0].id);
         setLoading(false);
     };
 
@@ -164,8 +167,11 @@ const AgregarOrdenVirtual = () => {
         filterDate()
     }, [search])
 
+    useEffect(()=>{
+        cop.length === 0 ? setBotonDoctor(true) : setBotonDoctor(false)
+    }, [cop])
+
     const filterDate = () =>{
-        
         if(search.length > 4){
             const filter = odontologos.filter(
             odon => odon.cop.toString() === (search)
@@ -202,11 +208,9 @@ const AgregarOrdenVirtual = () => {
         const ordenExisente = elementos.findIndex(
             (ordenExisente) => ordenExisente.id_item === orden.id_item
           );
-
         //   if (!ordenExisente) {
         //     setElementos([...elementos, orden]);
         //   }
-
           if (ordenExisente === -1) {
             setElementos([...elementos, orden]);
           } else {
@@ -214,15 +218,278 @@ const AgregarOrdenVirtual = () => {
             nuevaOrden[ordenExisente] = orden;
             setElementos(nuevaOrden);
           }
-
-        console.log(elementos)
     };
 
+    const llenarImpresion = (orden) => {
+        setAgregarComisiones(false);
+        const ordenExisente = impresionCheck.findIndex((ordenExisente) => (
+                ordenExisente.id === orden.id
+            )
+        );
+            
+          if (ordenExisente === -1) {
+            setImpresionCheck([...impresionCheck, orden]);
+          } else {
+            const nuevaOrden = [...impresionCheck];
+            nuevaOrden[ordenExisente] = orden;
+            setImpresionCheck(nuevaOrden);
+          }
+    };
+
+    const AGREGARPRECIO = () =>{
+        let count=0;
+        if(agregarComisiones === false){
+            for (let i = 0; i < elementos.length; i++) {
+                for (let j = 0; j <impresionCheck.length; j++) {
+                    if(elementos[i].estado === true && elementos[i].precio === (elementos[i].precio_impresion)-(elementos[i].comision_impreso)){
+                        elementos[i].precio = (elementos[i].precio_impresion);
+                    }else if(elementos[i].estado === true && elementos[i].precio === (elementos[i].precio_digital)-(elementos[i].comision_digital)){
+                        elementos[i].precio = (elementos[i].precio_digital);
+                    }
+                    if(elementos[i].id_servicio == impresionCheck[j].id && impresionCheck[j].estado === true && elementos[i].estado === true){
+                        elementos[i].precio = elementos[i].precio_impresion;
+                    }else  if(elementos[i].id_servicio == impresionCheck[j].id && impresionCheck[j].estado === false && elementos[i].estado === true){
+                        elementos[i].precio = elementos[i].precio_digital;
+                    }
+                    count++;
+                }
+            }
+            if(count === 0){
+                for (let i = 0; i < elementos.length; i++) {
+                    count=0;
+                    elementos[i].precio = elementos[i].precio_digital;
+                }
+            }    
+        }else{
+            for (let i = 0; i < elementos.length; i++) {
+                for (let j = 0; j <impresionCheck.length; j++) {
+                    if(elementos[i].estado === true && elementos[i].precio === elementos[i].precio_impresion){
+                        elementos[i].precio = (elementos[i].precio_impresion)-(elementos[i].comision_impreso);
+                    }else if(elementos[i].estado === true && elementos[i].precio === elementos[i].precio_digital){
+                        elementos[i].precio = (elementos[i].precio_digital)-(elementos[i].comision_digital);
+                    }
+                    count++;
+                }
+            }
+
+            if(count === 0){
+                for (let i = 0; i < elementos.length; i++) {
+                    count=0;
+                    elementos[i].precio = (elementos[i].precio_digital)-(elementos[i].comision_digital);
+                }
+            }   
+
+        }  
+        setTotalPrecio(elementos.reduce((acumulador, producto) => {
+            return acumulador = acumulador + (
+                producto.estado === true ? 
+                (parseFloat(producto.precio)) 
+                : 0
+                );
+        }, 0))
+    }
+
+    // const AGREGARPRECIO = () =>{
+    //     elementos.forEach(arr => {
+    //         if(agregarComisiones === false){
+    //             impresionCheck.forEach((impre) => {
+    //                 if(arr.id_servicio == impre.id && impre.estado === true && arr.estado === true){
+    //                     arr.precio = (arr.precio_impresion);
+    //                     return
+    //                 }else if(arr.id_servicio == impre.id && impre.estado === false && arr.estado === true){
+    //                     arr.precio = (arr.precio_digital);
+    //                     return
+    //                 }else if (arr.id_servicio !== impre.id && impre.estado === false && arr.estado === true){
+    //                     // arr.precio = (arr.precio_digital);
+    //                 }else if(arr.id_servicio !== impre.id && impre.estado === true && arr.estado === true){
+    //                     // arr.precio = (arr.precio_digital);
+    //                 }else{
+    //                     // console.log("hola1")
+    //                 }
+    //             });
+    //             if(impresionCheck.length === 0){
+    //                 arr.precio = (arr.precio_digital);
+    //             }
+    //         }else if(agregarComisiones === true) {
+    //             impresionCheck.forEach((impre) => {
+    //                 if(arr.id_servicio == impre.id && impre.estado === true && arr.estado === true){
+    //                     arr.precio = (arr.precio_impresion - arr.comision_impreso);
+    //                 }else if(arr.id_servicio == impre.id && impre.estado === false && arr.estado === true){
+    //                     arr.precio = (arr.precio_digital - arr.comision_digital);
+    //                     console.log("hola2")
+    //                 }else if (arr.id_servicio !== impre.id && impre.estado === false && arr.estado === true){
+    //                     // arr.precio = (arr.precio_digital - arr.comision_digital);
+    //                     // console.log("hola3")
+    //                 }else if(arr.id_servicio !== impre.id && impre.estado === true && arr.estado === true){
+    //                     // arr.precio = (arr.precio_digital - arr.comision_digital);
+    //                     // // console.log("hola4")
+    //                 }else{
+    //                     console.log("hola2")
+    //                 }
+    //             });
+    //             if(impresionCheck.length === 0){
+    //                 arr.precio = (arr.precio_digital - arr.comision_digital);
+    //             }
+
+
+    //             // console.log("hola1")
+    //             // console.log(arr.id_servicio )
+    //             // console.log(impre.id)
+    //             // console.log(impre.estado)
+    //         }
+    //     });
+    //     setTotalPrecio(elementos.reduce((acumulador, producto) => {
+    //         return acumulador = acumulador + (
+    //             producto.estado === true ? 
+    //             (parseFloat(producto.precio)) 
+    //             : 0
+    //             );
+    //     }, 0))
+    // }
+
+    // const AGREGARPRECIO = () =>{
+    //     if(agregarComisiones === false){
+    //         impresionCheck.forEach((impre) => {
+    //             if(impre.estado === true){
+    //                 elementos.forEach(arr => {
+    //                     if(arr.id_servicio === impre.id){
+    //                         arr.precio = (arr.precio_impresion);
+    //                     }
+    //                 });
+    
+    //             }else{
+    //                 elementos.forEach(arr => {
+    //                         arr.precio = (arr.precio_digital);
+    //                 });
+    //             }
+    //         })
+
+    //         if(impresionCheck.length <= 0){
+    //             elementos.forEach(arr => {
+    //                 arr.precio = (arr.precio_digital);
+    //             });
+    //         }
+
+
+    //     setTotalPrecio(elementos.reduce((acumulador, producto) => {
+    //         return acumulador = acumulador + (
+    //             producto.estado === true ? 
+    //             (parseFloat(producto.precio)) 
+    //             : 0
+    //             );
+    //     }, 0))
+    //     } else if(agregarComisiones === true){
+    //         impresionCheck.forEach((impre) => {
+    //             if(impre.estado === true){
+    //                 elementos.forEach(arr => {
+    //                     if(arr.id_servicio === impre.id){
+    //                         arr.precio = (arr.precio_impresion - arr.comision_impreso);
+    //                     }
+    //                 });
+    //             }else{
+    //                 elementos.forEach(arr => {
+    //                     arr.precio = (arr.precio_digital - arr.comision_digital);
+    //                 });
+    //             }
+    //         })
+            
+    //         if(impresionCheck.length <= 0){
+    //             elementos.forEach(arr => {
+    //                 arr.precio = (arr.precio_digital - arr.comision_digital);
+    //             });
+    //         }
+
+    //         setTotalPrecio(elementos.reduce((acumulador, producto) => {
+    //             return acumulador = acumulador + (
+    //                 producto.estado === true ? 
+    //                 (parseFloat(producto.precio)) 
+    //                 : 0
+    //                 );
+    //         }, 0))
+    //     }
+    // }
+
+    // const AGREGARPRECIO = () =>{
+    //     if(agregarComisiones === false){
+    //         impresionCheck.forEach((impre) => {
+    //             if(impre.estado === true){
+    //                 elementos.forEach(arr => {
+    //                     if(arr.id_servicio == impre.id){
+    //                         console.log("entro 1");
+    //                         arr.precio = (arr.precio_impresion);
+    //                     }else if(arr.id_servicio != impre.id){
+    //                         console.log("entro 2");
+    //                         arr.precio = (arr.precio_digital);
+    //                     }
+    //                 });
+    
+    //             }else{
+    //                 elementos.forEach(irr => {
+    //                         console.log("entro al general");
+    //                         irr.precio = (irr.precio_digital);
+    //                 });
+    //             }
+    //         })
+
+    //         if(impresionCheck.length <= 0){
+    //             elementos.forEach(arr => {
+    //                 console.log("entro_sin_nada")
+    //                 arr.precio = (arr.precio_digital);
+    //             });
+    //         }
+
+
+    //     setTotalPrecio(elementos.reduce((acumulador, producto) => {
+    //         return acumulador = acumulador + (
+    //             producto.estado === true ? 
+    //             (parseFloat(producto.precio)) 
+    //             : 0
+    //             );
+    //     }, 0))
+    //     } else if(agregarComisiones === true){
+    //         impresionCheck.forEach((impre) => {
+    //             if(impre.estado === true){
+    //                 elementos.forEach(arr => {
+    //                     if(arr.id_servicio === impre.id){
+    //                         arr.precio = (arr.precio_impresion - arr.comision_impreso);
+    //                     }else{
+    //                         arr.precio = (arr.precio_digital - arr.comision_digital);
+    //                     }
+    //                 });
+    //             }else{
+    //                 elementos.forEach(arr => {
+    //                     arr.precio = (arr.precio_digital - arr.comision_digital);
+    //                 });
+    //             }
+    //         })
+            
+    //         if(impresionCheck.length <= 0){
+    //             elementos.forEach(arr => {
+    //                 arr.precio = (arr.precio_digital - arr.comision_digital);
+    //             });
+    //         }
+
+    //         setTotalPrecio(elementos.reduce((acumulador, producto) => {
+    //             return acumulador = acumulador + (
+    //                 producto.estado === true ? 
+    //                 (parseFloat(producto.precio)) 
+    //                 : 0
+    //                 );
+    //         }, 0))
+    //     }
+    // }
+
+
     useEffect(()=>{
-        const total = elementos.reduce((acumulador, producto) => {
-                return acumulador = acumulador + (producto.estado === true ? (parseFloat(producto.precio)) : 0);
-        }, 0); // 0 es el valor inicial del acumulador
-        setTotalPrecio(total);
+        AGREGARPRECIO();
+    },[agregarComisiones])
+    
+    useEffect(()=>{
+        AGREGARPRECIO();
+    }, [impresionCheck])
+
+    useEffect(()=>{
+        AGREGARPRECIO();
     }, [elementos])
 
     const saveOrdenVirtual = async (e) => {
@@ -273,12 +540,14 @@ const AgregarOrdenVirtual = () => {
         data.append('siConGuias', siConGuias == true ? 1 : 0);
         data.append('noConGuias', noConGuias == true ? 1 : 0);
 
+        data.append('listaServicios', JSON.stringify(impresionCheck));
         data.append('listaItems', JSON.stringify(elementos));
         data.append('precio_final', totalPrecio);
         data.append('metodoPago', metodoPago);
 
         data.append('otrosAnalisis', otrosAnalisis);
         data.append('estado', 0);
+        data.append('activeComision', agregarComisiones === true ? 1 : 0);
 
         try {
             let respuesta = await axios.post(`${Global.url}/saveOrdenVirtual`, data,{
@@ -294,6 +563,7 @@ const AgregarOrdenVirtual = () => {
                 Swal.fire('Error al agregar el registro', '', 'error');
             }
         } catch (error) {
+            console.log(error.request.response)
             let doctorcampo = document.querySelector('.disabled_item').value;
             if(doctorcampo.length <=0){
                 Swal.fire('Debe registrar el doctor', '', 'error');
@@ -307,6 +577,13 @@ const AgregarOrdenVirtual = () => {
         }
 
     }
+
+    useEffect(() =>{
+        getCliente();
+        getAllOdontologos();
+        getAllServicios();
+        getAllItems();
+    },[])
 
     return (
         <div className="container col-md-9 mt-6">
@@ -323,10 +600,29 @@ const AgregarOrdenVirtual = () => {
                     </div>
                     <div className="d-flex justify-content-center">
                         <div className="mb-3 col-md-11">
-                            <label className="form-label titulos_labels">DATOS DEL PACIENTE </label>
+                            <label className="form-label titulos_labels">GENERAL </label>
+                            <div className='content_general mb-3 col-md-12'>
+                                <div className="mb-3 col-md-4 div_conten2">
+                                    <label className="label_title col-md-5">Total a pagar: </label>
+                                    <input className="form-control form-control3 form-control2" disabled required
+                                        value={(totalPrecio).toFixed(2)}
+                                        type="text"
+                                        onChange={(e) => setTotalPrecio(e.target.value)}
+                                    />
+                                </div>
+                                <div className="mb-3 col-md-5 div_conten2">
+                                    <label className="label_title col-md-5">Restar comisiones: </label>
+                                    <input type="checkbox" className='on_active'
+                                        value={agregarComisiones}
+                                        checked={agregarComisiones}
+                                        onChange={(e) => setAgregarComisiones(e.target.checked)}
+                                    />
+                                </div>
+                            </div>
+                            <label className="form-label titulos_labels" style={{margin: '10px 0 10px 0'}}>DATOS DEL PACIENTE </label>
                             <div className='content_general mb-3 col-md-12'>
                                 <div className="mb-3 col-md-10 div_conten2">
-                                    <label className="label_title">Nombres: </label>
+                                    <label className="label_title col-md-5">Nombres: </label>
                                     <input className="form-control form-control3" disabled  required
                                         value={nombres}
                                         type="text"
@@ -334,8 +630,8 @@ const AgregarOrdenVirtual = () => {
                                     />
                                 </div>
                                 <div className="mb-3 col-md-2 div_conten">
-                                    <label className="label_title">Edad: </label>
-                                    <input className="form-control form-control3" disabled  required
+                                    <label className="label_title col-md-5">Edad: </label>
+                                    <input className="form-control form-control3 form-control2" disabled  required
                                         value={edad}
                                         type="text"
                                         onChange={(e) => setEdad(e.target.value)}
@@ -345,15 +641,15 @@ const AgregarOrdenVirtual = () => {
 
                             <div className='content_general mb-3 col-md-12'>
                                 <div className="mb-3 col-md-5 div_conten2">
-                                    <label className="label_title">Fecha de Nacimiento: </label>
-                                    <input className="form-control form-control3" disabled  required
+                                    <label className="label_title col-md-5">Fecha de Nacimiento: </label>
+                                    <input className="form-control form-control3 form-control2" disabled  required
                                         value={fecha}
                                         type="text"
                                         onChange={(e) => setFecha(e.target.value)}
                                     />
                                 </div>
-                                <div className="mb-3 col-md-3 div_conten2">
-                                    <label className="label_title">Sexo:</label>
+                                <div className="mb-3 col-md-3 div_conten2" style={{justifyContent: 'center'}}>
+                                    <label className="label_title col-md-5">Sexo:</label>
                                     <span className=''>M</span>
                                     <input value={varon} type="checkbox" className='on_active' disabled onChange={(e) => setVaron(e.target.checked)} checked={varon} />
                                     <span className="">F</span>
@@ -361,7 +657,7 @@ const AgregarOrdenVirtual = () => {
                                 </div>
 
                                 <div className="mb-3 col-md-4 div_conten">
-                                    <label className="label_title">Telefono: </label>
+                                    <label className="label_title col-md-5">Telefono: </label>
                                     <input className="form-control form-control3 form-control2"  disabled  required
                                         value={celular}
                                         type="text"
@@ -371,8 +667,8 @@ const AgregarOrdenVirtual = () => {
                             </div>
 
                             <div className='content_general mb-3 col-md-12'>
-                                <div className="mb-3 col-md-12 div_conten2">
-                                    <label className="label_title " >Motivo de consulta: </label>
+                                <div className="mb-3 col-md-12 div_conten">
+                                    <label className="label_title col-md-5" >Motivo de consulta: </label>
                                     <input className="form-control form-control3" autoFocus required
                                         value={consulta}
                                         type="text"
@@ -382,8 +678,14 @@ const AgregarOrdenVirtual = () => {
                             </div>
 
                             <div className='div_busqueda'>
-                                <label className="form-label titulos_labels" style={{margin: '10px 0 10px 0'}}>DATOS DEL DOCTOR(A) </label>
-                                <label>Buscar:<input 
+                                <div>
+                                    <label className="form-label titulos_labels" style={{margin: '10px 0 10px 0'}}>DATOS DEL DOCTOR(A) </label>
+                                    {botonDoctor === true ?
+                                        <BsPlusCircleFill style={{marginLeft: '20px', fontSize: '30px', color: '#906B9F', cursor: 'ponter'}} onClick={handleShow}/>
+                                    :""
+                                    }
+                                </div>
+                                <label>Buscar COD: <input 
                                     value={search}
                                     maxLength={10}
                                     onChange={onSeachChange}
@@ -392,9 +694,9 @@ const AgregarOrdenVirtual = () => {
                             </div>
                             
                             <div className='content_general mb-3 col-md-12'>
-                                <div className="mb-3 col-md-12 div_conten2">
-                                    <label className="label_title">Doctor(a): </label>
-                                    <input className="form-control form-control3 disabled_item" disabled  required  
+                                <div className="mb-3 col-md-12 div_conten">
+                                    <label className="label_title col-md-5">Doctor(a): </label>
+                                    <input className="form-control form-control3" required disabled
                                         value={odontologo}
                                         type="text"
                                         onChange={(e) => setOdontologo(e.target.value)}
@@ -404,8 +706,8 @@ const AgregarOrdenVirtual = () => {
 
                             <div className='content_general mb-3 col-md-12'>
                                 <div className="mb-3 col-md-6 div_conten2">
-                                    <label className="label_title">C.O.P: </label>
-                                    <input className="form-control form-control3 " disabled  required 
+                                    <label className="label_title col-md-5">C.O.P: </label>
+                                    <input className="form-control form-control3" required disabled
                                         value={cop}
                                         type="text"
                                         onChange={(e) => setCop(e.target.value)}
@@ -413,8 +715,8 @@ const AgregarOrdenVirtual = () => {
                                 </div>
 
                                 <div className="mb-3 col-md-6 div_conten">
-                                    <label className="label_title">EMAIL: </label>
-                                    <input className="form-control form-control3 form-control2 " disabled  required 
+                                    <label className="label_title col-md-5">EMAIL: </label>
+                                    <input className="form-control form-control3 form-control2" required disabled
                                         value={emailOdon}
                                         type="text"
                                         onChange={(e) => setEmailOdon(e.target.value)}
@@ -422,32 +724,243 @@ const AgregarOrdenVirtual = () => {
                                 </div>
                             </div>
 
+                            {idServicio != 0 ?
+                            <Accordion defaultActiveKey={idServicio} style={{marginTop: '20px'}}>
+                                {servicios.map((servicio) => (
+                                <Accordion.Item eventKey={servicio.id} key={servicio.id}>
+                                    <Accordion.Header> 
+                                        <label className="form-label titulos_labels" style={{margin: '10px 0 10px 0'}}>{servicio.nombre}</label>
+                                    </Accordion.Header>
+                                    <Accordion.Body>
+                                        {
+                                            servicio.impreso === 1 ?
+                                            <div className='item_impresion'>
+                                                <span className=''>¿Impresion?</span>
+                                                <input type="checkbox" 
+                                                    checked={impresionCheck.find(estado => estado.id === servicio.id)?.estado || false}
+                                                    id={"checkboxi"+servicio.id} className='on_active'  
+                                                    onChange={(e)=>{llenarImpresion({
+                                                        id: servicio.id, 
+                                                        estado: e.target.checked, 
+                                                    })}}
+                                                />
+                                            </div>
+                                            : ""
+                                        }
+                                        <div  className='mb-3 col-md-12 div_general_box'>
+                                            <ul className="mb-3 col-md-12 div_secundario">
+                                                {items.map((item) => (
+                                                item.id_servicio === servicio.id ?   
+                                                <li key={item.id} className='content_checkBox'>
+                                                    <input type="checkbox" 
+                                                    checked={elementos.find(estado => estado.id_item === item.id)?.estado || false}
+                                                    id={"checkboxi"+item.id} className='on_active'  
+                                                    onChange={
+                                                        (e)=>{llenarArray({
+                                                        id_item: item.id, 
+                                                        id_servicio: servicio.id, 
+                                                        estado: e.target.checked, 
+                                                        precio: item.precio_digital,
+                                                        precio_impresion: item.precio_impresion,
+                                                        precio_digital: item.precio_digital,
+                                                        comision_impreso: item.comision_impreso,
+                                                        comision_digital: item.comision_digital,
+                                                        })}
+                                                    }
+                                                    />
+                                                    <span className=''>{item.nombre}</span>
+                                                </li>
+                                                : ""
+                                                ))}
+                                            </ul>
+                                        </div>
 
-                            {servicios.map((servicio) => (
-                            <div key={servicio.id}>
-                            <label className="form-label titulos_labels" style={{margin: '10px 0 10px 0'}}>{servicio.nombre}</label>
-                            <div  className='mb-3 col-md-12 div_general_box'>
-                                <ul className="mb-3 col-md-12 div_secundario">
-                                    {items.map((item) => (
-                                     item.id_servicio === servicio.id ?   
-                                    <li key={item.id} className='content_checkBox chsscjcon'>
-                                        <input  type="checkbox" className='on_active'  onChange={(e)=>{llenarArray({id_item: item.id, estado: e.target.checked , precio: item.precio_venta})}}
-                                        />
-                                        <span className=''>{item.nombre}</span>
-                                    </li>
-                                    : ""
-                                    ))}
-                                </ul>
-                            </div>
-                            </div>
-                            ))}
+                                        {servicio.id === 1 ?
+                                        <>
+                                        <label className="form-label titulos_labels" style={{margin: '10px 0 10px 0'}}>IMPLANTES / ENDODONCIA</label>
+                                        <div className='mb-3 col-md-12 div_box_generl_bot'>
+                                            <div className="mb-3 col-md-12 div_tercero">
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box18} onChange={(e) => setBox18(e.target.checked)} checked={box18}/>
+                                                    <span className=''>18</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box17} onChange={(e) => setBox17(e.target.checked)} checked={box17}/>
+                                                    <span className="">17</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box16} onChange={(e) => setBox16(e.target.checked)} checked={box16}/>
+                                                    <span className="">16</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box15} onChange={(e) => setBox15(e.target.checked)} checked={box15}/>
+                                                    <span className="">15</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box14} onChange={(e) => setBox14(e.target.checked)} checked={box14}/>
+                                                    <span className="">14</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box13} onChange={(e) => setBox13(e.target.checked)} checked={box13}/>
+                                                    <span className="">13</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box12} onChange={(e) => setBox12(e.target.checked)} checked={box12}/>
+                                                    <span className="">12</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box11} onChange={(e) => setBox11(e.target.checked)} checked={box11}/>
+                                                    <span className="">11</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box21} onChange={(e) => setBox21(e.target.checked)} checked={box21}/>
+                                                    <span className="">21</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box22} onChange={(e) => setBox22(e.target.checked)} checked={box22}/>
+                                                    <span className="">22</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box23} onChange={(e) => setBox23(e.target.checked)} checked={box23}/>
+                                                    <span className="">23</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box24} onChange={(e) => setBox24(e.target.checked)} checked={box24}/>
+                                                    <span className="">24</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box25} onChange={(e) => setBox25(e.target.checked)} checked={box25}/>
+                                                    <span className="">25</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box26} onChange={(e) => setBox26(e.target.checked)} checked={box26}/>
+                                                    <span className="">26</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box27} onChange={(e) => setBox27(e.target.checked)} checked={box27}/>
+                                                    <span className="">27</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box28} onChange={(e) => setBox28(e.target.checked)} checked={box28}/>
+                                                    <span className="">28</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className='mb-3 col-md-12 '>
+                                            <div className="mb-3 col-md-12 div_tercero">
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box48} onChange={(e) => setBox48(e.target.checked)} checked={box48} />
+                                                    <span className=''>48</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box47} onChange={(e) => setBox47(e.target.checked)} checked={box47}/>
+                                                    <span className="">47</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box46} onChange={(e) => setBox46(e.target.checked)} checked={box46}/>
+                                                    <span className="">46</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box45} onChange={(e) => setBox45(e.target.checked)} checked={box45}/>
+                                                    <span className="">45</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box44} onChange={(e) => setBox44(e.target.checked)} checked={box44}/>
+                                                    <span className="">44</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box43} onChange={(e) => setBox43(e.target.checked)} checked={box43}/>
+                                                    <span className="">43</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box42} onChange={(e) => setBox42(e.target.checked)} checked={box42}/>
+                                                    <span className="">42</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box41} onChange={(e) => setBox41(e.target.checked)} checked={box41}/>
+                                                    <span className="">41</span>
+                                                </div>
+
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box31} onChange={(e) => setBox31(e.target.checked)} checked={box31}/>
+                                                    <span className="">31</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box32} onChange={(e) => setBox32(e.target.checked)} checked={box32}/>
+                                                    <span className="">32</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box33} onChange={(e) => setBox33(e.target.checked)} checked={box33}/>
+                                                    <span className="">33</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box34} onChange={(e) => setBox34(e.target.checked)} checked={box34}/>
+                                                    <span className="">34</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box35} onChange={(e) => setBox35(e.target.checked)} checked={box35}/>
+                                                    <span className="">35</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box36} onChange={(e) => setBox36(e.target.checked)} checked={box36}/>
+                                                    <span className="">36</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box37} onChange={(e) => setBox37(e.target.checked)} checked={box37}/>
+                                                    <span className="">37</span>
+                                                </div>
+                                                <div className='content_cuadrados'>
+                                                    <input type="checkbox" className='' value={box38} onChange={(e) => setBox38(e.target.checked)} checked={box38}/>
+                                                    <span className="">38</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className='mb-3 col-md-12 div_bot_box2'>
+                                            <span className='label_title2'>MUY IMPORTANTE: ¿El paciente es enviado con guias?</span> 
+                                            <div className='content_checkBox2'>
+                                                <span className="">Si</span>
+                                                <input type="checkbox" className='on_active' checked={siConGuias}  value={siConGuias} onChange={(e) =>{
+                                                    setSiConGuias(e.target.checked)
+                                                    setNoConGuias(false)
+                                                }
+                                                } />
+                                            </div>
+                                            <div className='content_checkBox2'>
+                                                <span className="">No</span>
+                                                <input type="checkbox" className='on_active'  value={noConGuias} onChange={(e) => {setNoConGuias(e.target.checked) , setSiConGuias(false)}} checked={noConGuias} />
+                                            </div>
+                                        </div>
+                                        </>
+                                        : ""}
+                                    </Accordion.Body>
+                                </Accordion.Item>
+                                ))}
+                            </Accordion>
+                            : ""}
+                            <label className="form-label titulos_labels" style={{margin: '20px 0 10px 0'}}>OTROS: </label>
+
                             <div className='mb-3 col-md-12 div_general_box div_general_box2'>
-                                <div className="mb-3 col-md-8 div_secundario">
-                                    <textarea type="text" className="form-control areas_textos" cols="50"    value={otrosAnalisis} onChange={(e) => setOtrosAnalisis(e.target.value)} placeholder='Otros:'></textarea>
+                                <div className="mb-3 col-md-12">
+                                    <textarea type="text" className="form-control areas_textos colorarea" cols="70"  required  value={otrosAnalisis} onChange={(e) => setOtrosAnalisis(e.target.value)}></textarea>
                                 </div>
                             </div>
                        </div>
                     </div>
+
+                    <Modal show={show} onHide={handleClose} animation={false} >
+                        <Modal.Body>
+                            <AgregarOdontologo cerrar={handleClose}/>
+                        </Modal.Body>
+                        <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose}>
+                            Cerrar
+                        </Button>
+                        {/* <Button variant="primary" onClick={handleClose}>
+                            Save Changes
+                        </Button> */}
+                        </Modal.Footer>
+                    </Modal>
+                    
                     <div className="d-flex gap-2 contentBtnRegistrar">
                         <input type="hidden" name="oculto" value="1" />
                         <Link to="/admin/ordenVirtual/validar" className="btn btn-danger btnCancelar">Cancelar</Link>

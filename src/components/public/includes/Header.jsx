@@ -32,7 +32,7 @@ export const Header = () => {
                             <li><Link to="nosotros">Nosotros</Link></li>
                             <li><Link href="">Servicios</Link></li>
                             <li><Link href="">Contáctanos</Link></li>
-                            <li><Link href="">Resultados</Link></li>
+                            <li><Link to="resultados">Resultados</Link></li>
                             <li><Link href="">Intranet</Link></li>
                         </ul>
                     </nav>

@@ -165,7 +165,7 @@ const EditarClinica = () => {
                     <div className="d-flex gap-2 contentBtnRegistrar">
                             <input type="hidden" name="oculto" value="1" />
                             <Link to="/admin/clinicas" className="btn btn-danger btnCancelar">Cancelar</Link>
-                            <input type="submit" className="btn btn-primary btnRegistrar" value="Editar" />
+                            <input type="submit" className="btn btn-primary btnRegistrar" value="Grabar" />
                         </div>
                 </form>
                 : <div className="dot-spinner dot-spinner4">
